@@ -46,6 +46,28 @@ class HomeController extends Controller
             });
         }
 
+        // Filter by salary range
+        if ($request->filled('salary_range')) {
+            $salaryRange = $request->salary_range;
+            if ($salaryRange === 'negotiable') {
+                // Find jobs where salary type is negotiable or both min and max are null
+                $query->where(function ($q) {
+                    $q->where('salary_type', 'negotiable')
+                      ->orWhere(function ($sub) {
+                          $sub->whereNull('salary_min')->whereNull('salary_max');
+                      });
+                });
+            } elseif (is_numeric($salaryRange)) {
+                // Logic mới: Tìm các công việc có khoảng lương mà điểm cuối của nó (salary_max)
+                // lớn hơn hoặc bằng mốc lương người dùng chọn.
+                // Điều này đảm bảo khi chọn "Trên 5 triệu" thì các công việc "10-15 triệu" cũng sẽ hiện ra.
+                $query->where(function ($q) use ($salaryRange) {
+                    $q->where('salary_max', '>=', (int)$salaryRange) // Lương tối đa >= mốc đã chọn
+                      ->orWhereNull('salary_max'); // Hoặc các công việc không có lương tối đa (ví dụ: "Từ 10 triệu" hoặc "Thương lượng")
+                });
+            }
+        }
+
         $jobs = $query->paginate(12);
         $categories = JobCategory::all();
         $locations = JobLocation::all();

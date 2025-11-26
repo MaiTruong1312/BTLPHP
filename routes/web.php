@@ -109,4 +109,17 @@ Route::middleware('web')->group(function () {
     });
 
     Route::get('/jobs/{slug}', [JobController::class, 'show'])->name('jobs.show');
+
+    // Static Pages
+    Route::get('/about', function () {
+        return view('about');
+    })->name('about');
+
+    Route::get('/privacy', function () {
+        return view('privacy');
+    })->name('privacy');
+
+    Route::get('/terms', function () {
+        return view('terms');
+    })->name('terms');
 });

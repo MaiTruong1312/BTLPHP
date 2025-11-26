@@ -7,21 +7,39 @@
     <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg shadow-lg p-8 mb-8 text-white">
         <h1 class="text-4xl font-bold mb-4">Find Your Dream Job</h1>
         <p class="text-xl mb-6">Discover thousands of job opportunities from top companies</p>
-        <form action="{{ route('home') }}" method="GET" class="flex flex-col sm:flex-row gap-4">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search jobs..." class="flex-1 px-4 py-3 rounded-lg text-gray-900">
-            <select name="category" class="px-4 py-3 rounded-lg text-gray-900">
-                <option value="">All Categories</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                @endforeach
-            </select>
-            <select name="location" class="px-4 py-3 rounded-lg text-gray-900">
-                <option value="">All Locations</option>
-                @foreach($locations as $location)
-                    <option value="{{ $location->id }}" {{ request('location') == $location->id ? 'selected' : '' }}>{{ $location->city }}</option>
-                @endforeach
-            </select>
-            <button type="submit" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100">Search</button>
+        <form action="{{ route('home') }}" method="GET" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Job title, keywords..." class="px-4 py-3 rounded-lg text-gray-900 w-full">
+                <select name="category" class="px-4 py-3 rounded-lg text-gray-900 w-full">
+                    <option value="">All Categories</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                    @endforeach
+                </select>
+                <select name="location" class="px-4 py-3 rounded-lg text-gray-900 w-full">
+                    <option value="">All Locations</option>
+                    @foreach($locations as $location)
+                        <option value="{{ $location->id }}" {{ request('location') == $location->id ? 'selected' : '' }}>{{ $location->city }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div class="md:col-span-2">
+                    <select name="salary_range" class="px-4 py-3 rounded-lg text-gray-900 w-full">
+                        <option value="">All Salaries</option>
+                        <option value="1000000" {{ request('salary_range') == '1000000' ? 'selected' : '' }}>Trên 1 triệu</option>
+                        <option value="2000000" {{ request('salary_range') == '2000000' ? 'selected' : '' }}>Trên 2 triệu</option>
+                        <option value="5000000" {{ request('salary_range') == '5000000' ? 'selected' : '' }}>Trên 5 triệu</option>
+                        <option value="10000000" {{ request('salary_range') == '10000000' ? 'selected' : '' }}>Trên 10 triệu</option>
+                        <option value="15000000" {{ request('salary_range') == '15000000' ? 'selected' : '' }}>Trên 15 triệu</option>
+                        <option value="20000000" {{ request('salary_range') == '20000000' ? 'selected' : '' }}>Trên 20 triệu</option>
+                        <option value="30000000" {{ request('salary_range') == '30000000' ? 'selected' : '' }}>Trên 30 triệu</option>
+                        <option value="50000000" {{ request('salary_range') == '50000000' ? 'selected' : '' }}>Trên 50 triệu</option>
+                        <option value="negotiable" {{ request('salary_range') == 'negotiable' ? 'selected' : '' }}>Thương lượng</option>
+                    </select>
+                </div>
+                <button type="submit" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 w-full">Search</button>
+            </div>
         </form>
     </div>
 
@@ -69,4 +87,3 @@
     </div>
 </div>
 @endsection
-

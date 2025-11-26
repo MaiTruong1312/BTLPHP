@@ -33,6 +33,23 @@ class JobController extends Controller
             $query->where('location_id', $request->location);
         }
 
+        // Salary range filtering
+        if ($request->filled('min_salary') || $request->filled('max_salary')) {
+            $query->where(function ($q) use ($request) {
+                $q->where(function ($subQuery) use ($request) {
+                    if ($request->filled('min_salary')) {
+                        $subQuery->where(function($orQuery) use ($request) {
+                            $orQuery->where('salary_max', '>=', $request->min_salary)
+                                    ->orWhereNull('salary_max');
+                        });
+                    }
+                    if ($request->filled('max_salary')) {
+                        $subQuery->where('salary_min', '<=', $request->max_salary);
+                    }
+                })->orWhere('salary_type', 'negotiable');
+            });
+        }
+
         $jobs = $query->paginate(12);
         $categories = JobCategory::all();
         $locations = JobLocation::all();

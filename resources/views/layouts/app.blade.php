@@ -230,38 +230,42 @@
                 <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div class="space-y-4">
-                            <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Solutions</h3>
+                            <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">For Candidates</h3>
                             <ul class="space-y-2">
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Marketing</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Analytics</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Commerce</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Insights</a></li>
+                                <li><a href="{{ route('jobs.index') }}" class="text-base text-gray-300 hover:text-white">Browse Jobs</a></li>
+                                @auth
+                                    @if(auth()->user()->isCandidate())
+                                        <li><a href="{{ route('saved-jobs.index') }}" class="text-base text-gray-300 hover:text-white">Saved Jobs</a></li>
+                                        <li><a href="{{ route('applications.index') }}" class="text-base text-gray-300 hover:text-white">My Applications</a></li>
+                                        <li><a href="{{ route('profile.show') }}" class="text-base text-gray-300 hover:text-white">My Profile</a></li>
+                                    @endif
+                                @endauth
                             </ul>
                         </div>
                         <div class="space-y-4">
-                            <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Support</h3>
+                            <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">For Employers</h3>
                             <ul class="space-y-2">
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Pricing</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Documentation</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Guides</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">API Status</a></li>
+                                <li><a href="{{ route('jobs.create') }}" class="text-base text-gray-300 hover:text-white">Post a Job</a></li>
+                                @auth
+                                    @if(auth()->user()->isEmployer() || auth()->user()->isAdmin())
+                                        <li><a href="{{ route('dashboard') }}" class="text-base text-gray-300 hover:text-white">Manage Jobs</a></li>
+                                        <li><a href="{{ route('admin.applications.index') }}" class="text-base text-gray-300 hover:text-white">Manage Applications</a></li>
+                                    @endif
+                                @endauth
                             </ul>
                         </div>
                         <div class="space-y-4">
                             <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Company</h3>
                             <ul class="space-y-2">
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">About</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Blog</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Jobs</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Press</a></li>
+                                <li><a href="{{ route('about') }}" class="text-base text-gray-300 hover:text-white">About Us</a></li>
+                                <li><a href="{{ route('blog.index') }}" class="text-base text-gray-300 hover:text-white">Blog</a></li>
                             </ul>
                         </div>
                         <div class="space-y-4">
                             <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Legal</h3>
                             <ul class="space-y-2">
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Claim</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Privacy</a></li>
-                                <li><a href="#" class="text-base text-gray-300 hover:text-white">Terms</a></li>
+                                <li><a href="{{ route('privacy') }}" class="text-base text-gray-300 hover:text-white">Privacy Policy</a></li>
+                                <li><a href="{{ route('terms') }}" class="text-base text-gray-300 hover:text-white">Terms of Service</a></li>
                             </ul>
                         </div>
                     </div>

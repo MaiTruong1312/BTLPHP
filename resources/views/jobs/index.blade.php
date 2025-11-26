@@ -7,8 +7,8 @@
     <h1 class="text-3xl font-bold mb-6">All Jobs</h1>
     
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <form action="{{ route('jobs.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search jobs..." class="px-4 py-2 border rounded-lg">
+        <form action="{{ route('jobs.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search jobs..." class="px-4 py-2 border rounded-lg md:col-span-2">
             <select name="category" class="px-4 py-2 border rounded-lg">
                 <option value="">All Categories</option>
                 @foreach($categories as $category)
@@ -21,7 +21,9 @@
                     <option value="{{ $location->id }}" {{ request('location') == $location->id ? 'selected' : '' }}>{{ $location->city }}</option>
                 @endforeach
             </select>
-            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Search</button>
+            <input type="number" name="min_salary" value="{{ request('min_salary') }}" placeholder="Min Salary" class="px-4 py-2 border rounded-lg">
+            <input type="number" name="max_salary" value="{{ request('max_salary') }}" placeholder="Max Salary" class="px-4 py-2 border rounded-lg">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 md:col-span-2">Search</button>
         </form>
     </div>
 

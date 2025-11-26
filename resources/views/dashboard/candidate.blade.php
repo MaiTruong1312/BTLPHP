@@ -4,6 +4,18 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
+        <div class="flex flex-wrap gap-4">
+            <a href="{{ route('profile.show') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Update Profile</a>
+            @if(auth()->user()->candidateProfile)
+            <a href="{{ route('profile.public.show', auth()->user()->id) }}" target="_blank" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700">View Public Profile</a>
+            @endif
+            <a href="{{ route('home') }}" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Browse Jobs</a>
+            <a href="{{ route('applications.index') }}" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">View Applications</a>
+        </div>
+    </div>
+    
     <h1 class="text-3xl font-bold mb-6">Candidate Dashboard</h1>
 
     <!-- Application Statistics Chart -->
@@ -71,17 +83,7 @@
         @endif
     </div>
 
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div class="flex flex-wrap gap-4">
-            <a href="{{ route('profile.show') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Update Profile</a>
-            @if(auth()->user()->candidateProfile)
-            <a href="{{ route('profile.public.show', auth()->user()->id) }}" target="_blank" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700">View Public Profile</a>
-            @endif
-            <a href="{{ route('home') }}" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Browse Jobs</a>
-            <a href="{{ route('applications.index') }}" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">View Applications</a>
-        </div>
-    </div>
+    
 </div>
 @endsection
 
