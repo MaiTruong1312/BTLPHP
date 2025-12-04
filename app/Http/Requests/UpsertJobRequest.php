@@ -29,7 +29,7 @@ class UpsertJobRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'title' => 'required|string|max:255',
             'category_id' => 'required|exists:job_categories,id',
             'location_id' => 'required|exists:job_locations,id',
@@ -42,12 +42,17 @@ class UpsertJobRequest extends FormRequest
             'salary_type' => 'required|in:month,year,hour,negotiable',
             'job_type' => 'required|in:full_time,part_time,internship,freelance,remote',
             'experience_level' => 'nullable|in:junior,mid,senior,lead',
-            'is_remote' => 'boolean',
+            'is_remote' => 'nullable|boolean',
             'vacancies' => 'required|integer|min:1',
             'deadline' => 'nullable|date|after:today',
-            'status' => 'in:draft,published,closed',
             'skills' => 'nullable|array',
             'skills.*' => 'exists:skills,id',
         ];
+
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            $rules['status'] = 'in:draft,published,closed';
+        }
+
+        return $rules;
     }
 }

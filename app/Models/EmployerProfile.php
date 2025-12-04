@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 class EmployerProfile extends Model
 {
     use HasFactory;
@@ -31,7 +32,10 @@ class EmployerProfile extends Model
     {
         return $this->hasMany(Job::class, 'employer_profile_id');
     }
-
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
     protected static function boot()
     {
         parent::boot();

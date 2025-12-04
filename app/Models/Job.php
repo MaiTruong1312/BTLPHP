@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
 class Job extends Model
 {
     use HasFactory;
@@ -101,6 +101,9 @@ class Job extends Model
                 $q->whereNull('deadline')
                     ->orWhere('deadline', '>=', now()->toDateString());
             });
+    }
+    public function comments(): HasMany{
+            return $this ->hasMany(Comment::class) ->whereNull('parent_id');
     }
 }
 

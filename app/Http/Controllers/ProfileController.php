@@ -63,6 +63,7 @@ class ProfileController extends Controller
             'expected_salary_max' => 'nullable|integer|min:0|gte:expected_salary_min',
             'skills' => 'nullable|array',
             'skills.*' => 'string', // Chấp nhận cả ID (dạng chuỗi) và tên kỹ năng mới
+            'is_searchable' => 'required|boolean',
         ]);
 
         $user->update(['name' => $validated['name']]);

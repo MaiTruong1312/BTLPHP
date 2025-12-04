@@ -60,10 +60,7 @@ class BlogController extends Controller
             'image' =>'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         $imagePath = null;
-    // 2. Kiểm tra xem có tệp hình ảnh được tải lên không
         if ($request->hasFile('image')) {
-        // Lưu hình ảnh vào thư mục 'storage/app/public/posts'
-        // và lấy đường dẫn tương đối
             $imagePath = $request->file('image')->store('posts', 'public');
         }
         $post = new Post($validated);

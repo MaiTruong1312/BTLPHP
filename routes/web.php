@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ApplicationController as AdminApplicationController;
 use App\Http\Controllers\Admin\JobController as AdminJobController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -12,7 +13,17 @@ use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SavedJobController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Employer\ApplicationController as EmployerApplicationController;
+use App\Http\Controllers\Employer\EmailTemplateController;
+use App\Http\Controllers\PricingController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\CandidateSearchController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\VNPayController;
+Route::get('/employer/subscriptions/vnpay-return', [SubscriptionController::class, 'vnpayReturn'])->name('employer.subscriptions.vnpay_return');
+Route::get('/employer/subscriptions/vnpay-ipn', [SubscriptionController::class, 'vnpayIpn'])->name('employer.subscriptions.vnpay_ipn');
 
 Route::middleware('web')->group(function () {
     // Home
@@ -26,6 +37,9 @@ Route::middleware('web')->group(function () {
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);
 
+    // Pricing Page
+    Route::get('/pricing', [PricingController::class, 'index'])->name('pricing');
+
     // Jobs
     Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
 
@@ -34,10 +48,21 @@ Route::middleware('web')->group(function () {
 
     // Authenticated routes
     Route::middleware('auth')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        // Notifications
+    Route::get('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead')->middleware('auth');
 
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+        Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    // Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/jobs/{job}/comments', [CommentController::class, 'store'])->name('comments.store');
     // Profile
+    // Comments
+    Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('/comments/{comment}/like', [\App\Http\Controllers\CommentLikeController::class, 'toggle'])->name('comments.like');
+
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile/candidate', [ProfileController::class, 'updateCandidate'])->name('profile.update.candidate');
     Route::put('/profile/employer', [ProfileController::class, 'updateEmployer'])->name('profile.update.employer');
@@ -70,8 +95,23 @@ Route::middleware('web')->group(function () {
         Route::put('/dashboard/blog/{post}', [BlogController::class, 'update'])->name('blog.update');
         Route::delete('/dashboard/blog/{post}', [BlogController::class, 'destroy'])->name('blog.destroy');
 
-        // Route for employer to update application status
-        Route::patch('/applications/{application}/status', [\App\Http\Controllers\Employer\ApplicationController::class, 'updateStatus'])->name('employer.applications.update-status')->where('application', '[0-9]+');
+    });
+
+    // Employer Application Management
+    Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer.')->group(function () {
+        Route::get('/applications', [EmployerApplicationController::class, 'index'])->name('applications.index');
+        Route::patch('/applications/{id}/status', [EmployerApplicationController::class, 'updateStatus'])->name('applications.updateStatus');
+        Route::patch('/applications/{id}/notes', [EmployerApplicationController::class, 'updateNotes'])->name('applications.updateNotes');
+        Route::delete('/applications/{id}', [EmployerApplicationController::class, 'destroy'])->name('applications.destroy');
+        Route::get('/applications/job/{job}', [EmployerApplicationController::class, 'showApplicants'])->name('applications.showApplicants');
+        Route::get('/applications/{application}/email', [EmployerApplicationController::class, 'showEmailForm'])->name('applications.email.show');
+        Route::post('/applications/{application}/send-email', [EmployerApplicationController::class, 'sendEmail'])->name('applications.sendEmail');
+
+        // Email Templates
+        Route::resource('templates', EmailTemplateController::class);
+
+        // Subscription
+        Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscriptions.store');
     });
 
     // Job Applications (Candidate)
@@ -91,9 +131,17 @@ Route::middleware('web')->group(function () {
 
     // Admin area
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        // Dashboard
+        Route::get('/', function() {
+            return redirect()->route('admin.dashboard');
+        });
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
         // Users
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
         Route::patch('/users/{user}/role', [AdminUserController::class, 'updateRole'])->name('users.update-role')->where('user', '[0-9]+');
+        Route::get('/users/roles', [AdminUserController::class, 'manageRoles'])->name('users.manage-roles');
+        Route::post('/users/bulk-update-roles', [AdminUserController::class, 'bulkUpdateRoles'])->name('users.bulk-update-roles');
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy')->where('user', '[0-9]+');
 
         // Jobs
@@ -122,4 +170,9 @@ Route::middleware('web')->group(function () {
     Route::get('/terms', function () {
         return view('terms');
     })->name('terms');
+    Route::middleware(['auth', 'role:employer'])->group(function () {
+    Route::get('/candidates/search', [CandidateSearchController::class, 'index'])
+         ->name('candidates.search')
+         ->can('search-candidates'); // <-- Áp dụng Gate ở đây
+});
 });

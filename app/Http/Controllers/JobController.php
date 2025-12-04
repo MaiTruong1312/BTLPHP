@@ -8,6 +8,7 @@ use App\Models\JobCategory;
 use App\Models\JobLocation;
 use App\Models\Skill;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class JobController extends Controller
@@ -59,21 +60,60 @@ class JobController extends Controller
 
     public function show($slug)
     {
-        $job = Job::with(['category', 'location', 'employerProfile', 'skills', 'user'])
+        $job = Job::with(['category', 'location', 'employerProfile', 'skills', 'user']) // Bỏ eager load comments ở đây
             ->where('slug', $slug)
             ->firstOrFail();
 
         // Increment views
         $job->increment('views_count');
+ 
+        // Lấy các bình luận gốc và phân trang chúng
+        // Eager load user và các bình luận trả lời (replies) cho mỗi bình luận
+        $comments = $job->comments()
+            ->with([
+                'user',
+                'replies' => function ($query) {
+                    $query->with('user')->latest();
+                }
+            ])
+            ->withCount('replies')
+            ->latest()
+            ->paginate(5, ['*'], 'page');
 
         $isSaved = auth()->check() && auth()->user()->savedJobs()->where('job_id', $job->id)->exists();
         $hasApplied = auth()->check() && auth()->user()->applications()->where('job_id', $job->id)->exists();
-
-        return view('jobs.show', compact('job', 'isSaved', 'hasApplied'));
+ 
+        return view('jobs.show', compact('job', 'isSaved', 'hasApplied', 'comments'));
     }
 
     public function create()
     {
+        // First, check for authorization
+        if (Gate::denies('create', Job::class)) {
+            $user = auth()->user();
+
+            // Check if the user has an employer profile
+            if (!$user->employerProfile) {
+                return redirect()->route('employer.profile.create')
+                    ->with('error', 'Please create your company profile before posting a job.');
+            }
+
+            // Check for active subscriptions
+            $activeSubscriptions = $user->employerProfile->subscriptions()
+                ->where(function ($query) {
+                    $query->where('ends_at', '>', now())->orWhereNull('ends_at');
+                })->exists();
+
+            if (!$activeSubscriptions) {
+                return redirect()->route('pricing')
+                    ->with('error', 'You need an active subscription to post a job. Please choose a plan.');
+            }
+
+            // If they have a subscription, they must have hit their limit
+            return redirect()->back()
+                ->with('error', 'You have reached the maximum number of job postings allowed by your current plan.');
+        }
+        
         // Lấy dữ liệu cần thiết cho các dropdown trong form
         $categories = JobCategory::orderBy('name')->get();
         $locations = JobLocation::orderBy('city')->get();
@@ -91,7 +131,7 @@ class JobController extends Controller
         $validated['user_id'] = auth()->id();
         $validated['slug'] = Str::slug($validated['title']) . '-' . time();
         $validated['is_remote'] = $request->has('is_remote');
-        $validated['status'] = $validated['status'] ?? 'published';
+        $validated['status'] = 'pending_approval'; // All new jobs require admin approval
 
         if (auth()->user()->employerProfile) {
             $validated['employer_profile_id'] = auth()->user()->employerProfile->id;
@@ -103,7 +143,7 @@ class JobController extends Controller
             $job->skills()->attach($request->skills);
         }
 
-        return redirect()->route('jobs.show', $job->slug)->with('success', 'Job posted successfully!');
+        return redirect()->route('dashboard')->with('success', 'Job submitted for approval successfully!');
     }
 
     public function edit($id)
@@ -163,6 +203,12 @@ class JobController extends Controller
                             ->with(['user', 'candidateProfile'])
                             ->paginate(15);
 
-        return view('jobs.applicants', compact('job', 'applications'));
+        $employer = auth()->user();
+        $templates = $employer->emailTemplates()->get();
+        
+        // Lấy danh sách công việc của nhà tuyển dụng để hiển thị trong bộ lọc
+        $jobs = Job::where('user_id', $employer->id)->orderBy('title')->get();
+
+        return view('employer.index', compact('job', 'applications', 'templates', 'jobs'));
     }
 }

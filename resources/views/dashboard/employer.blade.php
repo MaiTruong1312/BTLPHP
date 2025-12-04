@@ -7,8 +7,20 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Employer Dashboard</h1>
         <div class="flex space-x-4">
+            @can('search-candidates')
+                <a href="{{ route('candidates.search') }}" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700">
+                    Tìm Ứng Viên
+                </a>
+            @else
+                {{-- Hiển thị nút "Nâng cấp" nếu họ chưa có quyền --}}
+                <a href="{{ route('pricing') }}" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
+                    Nâng Cấp để Tìm Ứng Viên
+                </a>
+            @endcan
+
             <a href="{{ route('blog.create') }}" class="bg-green-500 text-white px-4 py-2 rounded-md">Create Post</a>
             <a href="{{ route('jobs.create') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Post a New Job</a>
+            <a href="{{ route('employer.applications.index') }}" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700">Manage Apps</a>
         </div>
     </div>
 

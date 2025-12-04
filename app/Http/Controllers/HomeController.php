@@ -6,14 +6,15 @@ use App\Models\Job;
 use App\Models\JobCategory;
 use App\Models\JobLocation;
 use App\Models\Skill;
+use App\Models\EmployerProfile;
 use Illuminate\Http\Request;
-
+use Carbon\Carbon;
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
         $query = Job::with(['category', 'location', 'employerProfile'])
-            ->active()
+            ->where('status', 'published') 
             ->latest();
 
         // Search
@@ -45,12 +46,9 @@ class HomeController extends Controller
                 $q->whereIn('skills.id', $request->skills);
             });
         }
-
-        // Filter by salary range
         if ($request->filled('salary_range')) {
             $salaryRange = $request->salary_range;
             if ($salaryRange === 'negotiable') {
-                // Find jobs where salary type is negotiable or both min and max are null
                 $query->where(function ($q) {
                     $q->where('salary_type', 'negotiable')
                       ->orWhere(function ($sub) {
@@ -58,20 +56,24 @@ class HomeController extends Controller
                       });
                 });
             } elseif (is_numeric($salaryRange)) {
-                // Logic mới: Tìm các công việc có khoảng lương mà điểm cuối của nó (salary_max)
-                // lớn hơn hoặc bằng mốc lương người dùng chọn.
-                // Điều này đảm bảo khi chọn "Trên 5 triệu" thì các công việc "10-15 triệu" cũng sẽ hiện ra.
                 $query->where(function ($q) use ($salaryRange) {
-                    $q->where('salary_max', '>=', (int)$salaryRange) // Lương tối đa >= mốc đã chọn
-                      ->orWhereNull('salary_max'); // Hoặc các công việc không có lương tối đa (ví dụ: "Từ 10 triệu" hoặc "Thương lượng")
+                    $q->where('salary_max', '>=', (int)$salaryRange)
+                      ->orWhereNull('salary_max'); 
                 });
             }
         }
 
-        $jobs = $query->paginate(12);
+        $jobs = $query->paginate(9)->withQueryString(); 
+        $stats = [
+            'jobs_count' => Job::where('status', 'published')->count(),
+            'companies_count' => EmployerProfile::count(),
+            'jobs_today_count' => Job::where('status', 'published')->whereDate('created_at', Carbon::today())->count(),
+        ];
+        $featuredCompanies = EmployerProfile::whereNotNull('logo')->latest()->take(5)->get();
+        $popularCategories = JobCategory::take(5)->get();
         $categories = JobCategory::all();
         $locations = JobLocation::all();
         $skills = Skill::all();
-        return view('home', compact('jobs', 'categories', 'locations', 'skills'));
+        return view('home', compact('jobs', 'categories', 'locations', 'skills', 'stats', 'featuredCompanies', 'popularCategories'));
     }
 }
