@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Route;
 
 // ...
 
-Auth::routes(['verify' => true]); // <-- Đảm bảo có ['verify' => true]
 
 class User extends Authenticatable implements MustVerifyEmail
 {
