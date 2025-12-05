@@ -4,12 +4,32 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use App\Models\Job;
 use Illuminate\Http\Request;
+
+// Thêm các Models cần thiết để tính toán stats
+use App\Models\User;
+use App\Models\EmployerProfile;
+use App\Models\CandidateProfile;
+
 class DashboardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index(Request $request)
     {
         $user = auth()->user();
 
+        // 1. KHỐI TÍNH TOÁN STATS CHUNG (BẮT BUỘC ĐỂ KHẮC PHỤC LỖI home.blade.php)
+        $stats = [
+            'jobs_count' => Job::active()->count(),
+            'employers_count' => User::where('role', 'employer')->count(),
+            'candidates_count' => User::where('role', 'candidate')->count(),
+            // Thêm các thống kê khác nếu cần cho home.blade.php
+        ];
+
+        // --- Logic cho Candidate ---
         if ($user->isCandidate()) {
             $applications = $user->applications()->with('job')->latest()->take(5)->get();
             $savedJobs = $user->savedJobs()->latest()->take(5)->get();
@@ -44,8 +64,12 @@ class DashboardController extends Controller
                 $chartData[] = $applicationStats->get($status, 0);
             }
             
-            return view('dashboard.candidate', compact('applications', 'savedJobs', 'suggestedJobs', 'chartLabels', 'chartData'));
-        } elseif ($user->isEmployer()) {
+            // TRUYỀN $stats CẦN THIẾT CHO home.blade.php
+            return view('dashboard.candidate', compact('applications', 'savedJobs', 'suggestedJobs', 'chartLabels', 'chartData', 'stats'));
+        } 
+        
+        // --- Logic cho Employer ---
+        elseif ($user->isEmployer()) {
             $employerJobsQuery = $user->jobs(); 
             $jobIds = (clone $employerJobsQuery)->pluck('id');
             $totalJobs = $jobIds->count();
@@ -71,11 +95,18 @@ class DashboardController extends Controller
 
             $jobs = $employerJobsQuery->with(['category', 'location'])->latest()->paginate(10);
             
-            return view('dashboard.employer', compact('jobs', 'totalApplications', 'totalJobs', 'chartLabels', 'chartData', 'period'));
-        } elseif ($user->isAdmin()) {
+            // TRUYỀN $stats CẦN THIẾT CHO home.blade.php
+            return view('dashboard.employer', compact('jobs', 'totalApplications', 'totalJobs', 'chartLabels', 'chartData', 'period', 'stats'));
+        } 
+        
+        // --- Logic cho Admin ---
+        elseif ($user->isAdmin()) {
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('home');
+        // --- FALLBACK (Người dùng đã đăng nhập nhưng không có vai trò cụ thể) ---
+        // Chuyển hướng người dùng đến trang hồ sơ để hoàn tất thông tin.
+        // Điều này tốt hơn là hiển thị một trang có thể bị lỗi do thiếu dữ liệu.
+        return redirect()->route('profile.show')->with('warning', 'Vui lòng cập nhật hồ sơ và chọn vai trò của bạn.');
     }
 }

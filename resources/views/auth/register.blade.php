@@ -104,7 +104,8 @@
 
                 {{-- COMPANY NAME (employer only) --}}
                 <div class="space-y-1" id="company_name_field"
-     @if(old('role') === 'employer') style="display: none;" @endif>
+                     style="{{ old('role') === 'employer' ? '' : 'display: none;' }}">
+
                     <label for="company_name" class="block text-gray-700 text-sm font-semibold">
                         Company Name
                     </label>
