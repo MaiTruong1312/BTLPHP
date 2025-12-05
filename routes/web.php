@@ -22,6 +22,7 @@ use App\Http\Controllers\CandidateSearchController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\VNPayController;
+
 Route::get('/employer/subscriptions/vnpay-return', [SubscriptionController::class, 'vnpayReturn'])->name('employer.subscriptions.vnpay_return');
 Route::get('/employer/subscriptions/vnpay-ipn', [SubscriptionController::class, 'vnpayIpn'])->name('employer.subscriptions.vnpay_ipn');
 
@@ -36,7 +37,34 @@ Route::middleware('web')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);
+    // Email verification (thêm vào ngay sau các route register/login)
+Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice')->middleware('throttle:6,1');
 
+    Route::post('/email/verification-notification', function( $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('message', 'Verification link sent!');
+    })->name('verification.send')->middleware('throttle:6,1');
+});
+
+Route::middleware(['signed', 'throttle:6,1'])->group(function () {
+    Route::get('/email/verify/{id}/{hash}', function ( $request, $id, $hash) {
+        $user = \App\Models\User::findOrFail($id);
+
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            abort(403);
+        }
+
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+            event(new \Illuminate\Auth\Events\Verified($user));
+        }
+
+        return redirect('/login')->with('success', 'Email verified. Please login.');
+    })->name('verification.verify');
+});
     // Pricing Page
     Route::get('/pricing', [PricingController::class, 'index'])->name('pricing');
 
@@ -176,3 +204,5 @@ Route::middleware('web')->group(function () {
          ->can('search-candidates'); // <-- Áp dụng Gate ở đây
 });
 });
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

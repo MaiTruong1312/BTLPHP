@@ -104,8 +104,7 @@
 
                 {{-- COMPANY NAME (employer only) --}}
                 <div class="space-y-1" id="company_name_field"
-                     style="{{ old('role') === 'employer' ? '' : 'display: none;' }}">
-
+     @if(old('role') === 'employer') style="display: none;" @endif>
                     <label for="company_name" class="block text-gray-700 text-sm font-semibold">
                         Company Name
                     </label>
@@ -120,6 +119,25 @@
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+
+                {{-- TERMS & NEWSLETTER --}}
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <input id="terms" name="terms" type="checkbox" required
+                               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mt-0.5">
+                        <div class="ml-3 text-sm">
+                            <label for="terms" class="text-gray-700">Tôi hiểu các điều khoản của Job_portal</label>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <input id="newsletter" name="newsletter" type="checkbox"
+                               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mt-0.5">
+                        <div class="ml-3 text-sm">
+                            <label for="newsletter" class="text-gray-700">Gửi cho tôi email hữu ích để tìm công việc phù hợp và cơ hội việc làm</label>
+                        </div>
+                    </div>
+                </div>
+
 
                 {{-- SUBMIT --}}
                 <button type="submit"

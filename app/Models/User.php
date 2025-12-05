@@ -1,12 +1,21 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-class User extends Authenticatable
+// routes/web.php
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
+// ...
+
+Auth::routes(['verify' => true]); // <-- Đảm bảo có ['verify' => true]
+
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 

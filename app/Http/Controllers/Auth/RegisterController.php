@@ -4,79 +4,69 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\CandidateProfile;
-use App\Models\EmployerProfile;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
-    public function showRegistrationForm()
+    /*
+    |--------------------------------------------------------------------------
+    | Register Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles the registration of new users as well as their
+    | validation and creation. By default this controller uses a trait to
+    | provide this functionality without requiring any additional code.
+    |
+    */
+
+    use RegistersUsers;
+
+    /**
+     * Where to redirect users after registration.
+     *
+     * @var string
+     */
+    protected $redirectTo = '/home';
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        return view('auth.register');
+        $this->middleware('guest');
     }
 
-    public function register(Request $request)
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator(array $data)
     {
-        $validator = Validator::make($request->all(), [
+        return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'in:candidate,employer'],
-            'company_name' => ['nullable', 'string', 'max:191'],
         ]);
+    }
 
-        $validator->sometimes('company_name', 'required', function ($input) {
-            return $input->role === 'employer';
-        });
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        try {
-            $user = DB::transaction(function () use ($request) {
-                $user = User::create([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'password' => Hash::make($request->password),
-                    'role' => $request->role,
-                ]);
-
-                if ($request->role === 'candidate') {
-                    CandidateProfile::create(['user_id' => $user->id]);
-                } else {
-                    $companyName = $request->company_name ?? 'Company '.$user->id;
-                    $slugBase = Str::slug($companyName);
-                    $slug = $slugBase;
-                    $counter = 1;
-                    while (EmployerProfile::where('company_slug', $slug)->exists()) {
-                        $slug = $slugBase.'-'.$counter++;
-                    }
-
-                    EmployerProfile::create([
-                        'user_id' => $user->id,
-                        'company_name' => $companyName,
-                        'company_slug' => $slug,
-                    ]);
-                }
-
-                return $user;
-            });
-        } catch (\Exception $e) {
-            \Log::error('Registration Error: ' . $e->getMessage());
-            throw $e;
-        }
-
-        event(new Registered($user));
-
-        auth()->login($user);
-
-        return redirect()->route('dashboard')->with('success', 'Welcome to Job Portal!');
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\Models\User
+     */
+    protected function create(array $data)
+    {
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
     }
 }
-

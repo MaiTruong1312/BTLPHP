@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Employer;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
