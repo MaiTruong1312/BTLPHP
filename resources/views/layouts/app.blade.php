@@ -56,6 +56,7 @@
                 <div class="pt-2 pb-3 space-y-1">
                     <a href="{{ route('home') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('home') || request()->routeIs('jobs.show') ? 'border-indigo-500 text-indigo-700 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300' }} text-base font-medium transition">Jobs</a>
                     <a href="{{ route('blog.index') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('blog.*') ? 'border-indigo-500 text-indigo-700 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300' }} text-base font-medium transition">Blog</a>
+                    <a href="{{ route('about') }}" class="block pl-3 pr-4 py-2 border-l-4 {{ request()->routeIs('about') ? 'border-indigo-500 text-indigo-700 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300' }} text-base font-medium transition">About</a>
                      @auth
                         @if(auth()->user()->isEmployer())
                             <a href="{{ route('jobs.create') }}" class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-indigo-500 transition">Post a Job</a>
@@ -123,6 +124,7 @@
                         <div class="hidden sm:flex items-center space-x-1">
                             <a href="{{ route('home') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('home') || request()->routeIs('jobs.show') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-700' }} hover:text-indigo-600 hover:bg-indigo-50 transition-colors duration-200">Jobs</a>
                             <a href="{{ route('blog.index') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('blog.*') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-700' }} hover:text-indigo-600 hover:bg-indigo-50 transition-colors duration-200">Blog</a>
+                            <a href="{{ route('about') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('about') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-700' }} hover:text-indigo-600 hover:bg-indigo-50 transition-colors duration-200">About</a>
                             @auth
                                 @if(auth()->user()->isEmployer())
                                     <a href="{{ route('jobs.create') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-100/50 transition-all duration-300 transform hover:-translate-y-0.5">Post a Job</a>
