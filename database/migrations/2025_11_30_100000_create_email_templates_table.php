@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('email_templates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // The employer who owns the template
-            $table->string('name'); // e.g., "Interview Invitation", "Job Offer"
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');
             $table->string('subject');
             $table->text('body');
-            $table->string('type')->index(); // 'interview', 'offered', 'rejected', etc. for categorization
+            $table->string('type')->index();
             $table->timestamps();
         });
     }

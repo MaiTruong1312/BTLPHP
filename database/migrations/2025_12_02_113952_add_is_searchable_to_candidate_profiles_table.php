@@ -6,19 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    
-public function up(): void
-{
-    Schema::table('candidate_profiles', function (Blueprint $table) {
-        $table->boolean('is_searchable')->default(false)->after('cv_path');
-    });
-}
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        // Schema changes are merged into 2024_01_01_000007_create_candidate_profiles_table.php
+    }
 
-public function down(): void
-{
-    Schema::table('candidate_profiles', function (Blueprint $table) {
-        $table->dropColumn('is_searchable');
-    });
-}
-
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        // Schema changes are merged into 2024_01_01_000007_create_candidate_profiles_table.php
+    }
 };

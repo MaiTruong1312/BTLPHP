@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('candidate_profiles', function (Blueprint $table) {
@@ -17,6 +20,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->text('summary')->nullable();
             $table->string('cv_path')->nullable();
+            $table->boolean('is_searchable')->default(false);
             $table->integer('years_of_experience')->nullable();
             $table->integer('expected_salary_min')->nullable();
             $table->integer('expected_salary_max')->nullable();
@@ -24,9 +28,11 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('candidate_profiles');
     }
 };
-

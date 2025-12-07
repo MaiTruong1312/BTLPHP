@@ -6,11 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('candidate_experiences', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('candidate_profile_id')->constrained()->onDelete('cascade');
+            $table->foreignId('candidate_profile_id')->constrained('candidate_profiles')->onDelete('cascade');
             $table->string('company_name');
             $table->string('position');
             $table->date('start_date');
@@ -18,13 +21,16 @@ return new class extends Migration
             $table->boolean('is_current')->default(false);
             $table->text('description')->nullable();
             $table->timestamps();
+
             $table->index('candidate_profile_id');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('candidate_experiences');
     }
 };
-
