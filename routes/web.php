@@ -31,6 +31,12 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 
 use App\Http\Controllers\Employer\ApplicationController as EmployerApplicationController;
 use App\Http\Controllers\Employer\EmailTemplateController;
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/run-migrate', function () {
+    Artisan::call('migrate', ['--force' => true]);
+    return 'Migrated successfully!';
+});
 
 /*
 |--------------------------------------------------------------------------
