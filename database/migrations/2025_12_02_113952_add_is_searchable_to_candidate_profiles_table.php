@@ -9,20 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up(): void
-{
-    Schema::table('posts', function (Blueprint $table) {
-        $table->string('image')->nullable()->after('content'); 
-    });
-}
+    public function up(): void
+    {
+        // Schema changes are merged into 2024_01_01_000007_create_candidate_profiles_table.php
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn('image');
-        });
+        // Schema changes are merged into 2024_01_01_000007_create_candidate_profiles_table.php
     }
 };

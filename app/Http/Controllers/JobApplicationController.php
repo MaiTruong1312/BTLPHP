@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Job;
 use App\Models\JobApplication;
+use App\Notifications\NewApplicantNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -35,7 +36,7 @@ class JobApplicationController extends Controller
             $cvPath = auth()->user()->candidateProfile->cv_path;
         }
 
-        JobApplication::create([
+        $application = JobApplication::create([
             'job_id' => $job->id,
             'user_id' => auth()->id(),
             'candidate_profile_id' => auth()->user()->candidateProfile?->id,
@@ -43,6 +44,11 @@ class JobApplicationController extends Controller
             'cv_path' => $cvPath,
             'status' => 'applied',
         ]);
+
+        // Gửi thông báo cho nhà tuyển dụng
+        $employer = $job->user;
+        $employer->notify(new NewApplicantNotification($application));
+
 
         return back()->with('success', 'Application submitted successfully!');
     }
@@ -59,7 +65,7 @@ class JobApplicationController extends Controller
 
         $applications = $query->paginate(10);
 
-        return view('applications.index', compact('applications'));
+        return view('applications.show', compact('applications'));
     }
 
     public function show($id)

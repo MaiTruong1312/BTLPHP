@@ -4,12 +4,32 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use App\Models\Job;
 use Illuminate\Http\Request;
+
+// Thêm các Models cần thiết để tính toán stats
+use App\Models\User;
+use App\Models\EmployerProfile;
+use App\Models\CandidateProfile;
+
 class DashboardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index(Request $request)
     {
         $user = auth()->user();
 
+        // 1. KHỐI TÍNH TOÁN STATS CHUNG (BẮT BUỘC ĐỂ KHẮC PHỤC LỖI home.blade.php)
+        $stats = [
+            'jobs_count' => Job::active()->count(),
+            'employers_count' => User::where('role', 'employer')->count(),
+            'candidates_count' => User::where('role', 'candidate')->count(),
+            // Thêm các thống kê khác nếu cần cho home.blade.php
+        ];
+
+        // --- Logic cho Candidate ---
         if ($user->isCandidate()) {
             $applications = $user->applications()->with('job')->latest()->take(5)->get();
             $savedJobs = $user->savedJobs()->latest()->take(5)->get();
@@ -30,8 +50,6 @@ class DashboardController extends Controller
                         ->get();
                 }
             }
-
-            // Lấy dữ liệu thống kê cho biểu đồ
             $applicationStats = $user->applications()
                 ->select('status', DB::raw('count(*) as count'))
                 ->groupBy('status')
@@ -46,20 +64,18 @@ class DashboardController extends Controller
                 $chartData[] = $applicationStats->get($status, 0);
             }
             
-            return view('dashboard.candidate', compact('applications', 'savedJobs', 'suggestedJobs', 'chartLabels', 'chartData'));
-        } elseif ($user->isEmployer()) {
-            $employerJobsQuery = $user->jobs(); // Query builder for employer's jobs
-
-            // Lấy ID của tất cả các công việc của nhà tuyển dụng để tính tổng số đơn ứng tuyển
+            // TRUYỀN $stats CẦN THIẾT CHO home.blade.php
+            return view('dashboard.candidate', compact('applications', 'savedJobs', 'suggestedJobs', 'chartLabels', 'chartData', 'stats'));
+        } 
+        
+        // --- Logic cho Employer ---
+        elseif ($user->isEmployer()) {
+            $employerJobsQuery = $user->jobs(); 
             $jobIds = (clone $employerJobsQuery)->pluck('id');
             $totalJobs = $jobIds->count();
             $totalApplications = \App\Models\JobApplication::whereIn('job_id', $jobIds)->count();
-
-            // Lấy khoảng thời gian từ request, mặc định là 30 ngày
             $period = in_array($request->input('period'), ['7', '30', '90']) ? $request->input('period') : '30';
             $days = (int)$period;
-
-            // Lấy dữ liệu cho biểu đồ ứng viên theo thời gian (30 ngày qua)
             $applicationStats = \App\Models\JobApplication::whereIn('job_id', $jobIds)
                 ->where('created_at', '>=', now()->subDays($days))
                 ->groupBy('date')
@@ -69,27 +85,28 @@ class DashboardController extends Controller
                     DB::raw('count(*) as count')
                 ])
                 ->pluck('count', 'date');
-
-            // Chuẩn bị dữ liệu cho Chart.js, lấp đầy những ngày không có đơn ứng tuyển
             $chartLabels = [];
             $chartData = [];
             for ($i = $days - 1; $i >= 0; $i--) {
                 $date = now()->subDays($i)->format('Y-m-d');
-                $chartLabels[] = now()->subDays($i)->format('M d'); // Format: e.g., "Nov 25"
+                $chartLabels[] = now()->subDays($i)->format('M d'); 
                 $chartData[] = $applicationStats->get($date, 0);
             }
 
             $jobs = $employerJobsQuery->with(['category', 'location'])->latest()->paginate(10);
             
-            return view('dashboard.employer', compact('jobs', 'totalApplications', 'totalJobs', 'chartLabels', 'chartData', 'period'));
-        } elseif ($user->isAdmin()) {
-            $totalJobs = \App\Models\Job::count();
-            $totalApplications = \App\Models\JobApplication::count();
-            $totalUsers = \App\Models\User::count();
-            
-            return view('dashboard.admin', compact('totalJobs', 'totalApplications', 'totalUsers'));
+            // TRUYỀN $stats CẦN THIẾT CHO home.blade.php
+            return view('dashboard.employer', compact('jobs', 'totalApplications', 'totalJobs', 'chartLabels', 'chartData', 'period', 'stats'));
+        } 
+        
+        // --- Logic cho Admin ---
+        elseif ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('home');
+        // --- FALLBACK (Người dùng đã đăng nhập nhưng không có vai trò cụ thể) ---
+        // Chuyển hướng người dùng đến trang hồ sơ để hoàn tất thông tin.
+        // Điều này tốt hơn là hiển thị một trang có thể bị lỗi do thiếu dữ liệu.
+        return redirect()->route('profile.show')->with('warning', 'Vui lòng cập nhật hồ sơ và chọn vai trò của bạn.');
     }
 }

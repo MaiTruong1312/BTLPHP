@@ -186,6 +186,34 @@
                         <p class="text-sm text-gray-500 mt-2">Current CV: <a href="{{ asset('storage/' . $user->candidateProfile->cv_path) }}" target="_blank" class="text-blue-600 hover:underline">View CV</a></p>
                     @endif
                 </div>
+
+                <!-- Profile Visibility -->
+                <div class="md:col-span-2 pt-6 border-t mt-6">
+                    <h3 class="text-lg font-medium text-gray-900">Profile Visibility</h3>
+                    <p class="text-sm text-gray-500 mt-1">Allow employers to find your profile in searches.</p>
+                    <div class="mt-4">
+                        <style>
+                            input:checked ~ .dot {
+                                transform: translateX(100%);
+                                background-color: #4f46e5; /* indigo-600 */
+                            }
+                            input:checked ~ .block {
+                                background-color: #a5b4fc; /* indigo-300 */
+                            }
+                        </style>
+                        <label for="is_searchable" class="flex items-center cursor-pointer">
+                            <div class="relative">
+                                <input type="hidden" name="is_searchable" value="0">
+                                <input type="checkbox" id="is_searchable" name="is_searchable" value="1" class="sr-only" @checked(old('is_searchable', $user->candidateProfile?->is_searchable))>
+                                <div class="block bg-gray-200 w-14 h-8 rounded-full transition"></div>
+                                <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                            </div>
+                            <div class="ml-3 text-gray-700 font-medium">
+                                Make profile searchable
+                            </div>
+                        </label>
+                    </div>
+                </div>
             </div>
 
             <div class="mt-6">
