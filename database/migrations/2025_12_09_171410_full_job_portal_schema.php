@@ -75,17 +75,17 @@ return new class extends Migration
         //     $table->timestamps();
         // });
 
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity');
+        // Schema::create('sessions', function (Blueprint $table) {
+        //     $table->string('id')->primary();
+        //     $table->unsignedBigInteger('user_id')->nullable();
+        //     $table->string('ip_address', 45)->nullable();
+        //     $table->text('user_agent')->nullable();
+        //     $table->longText('payload');
+        //     $table->integer('last_activity');
 
-            $table->index('user_id', 'sessions_user_id_index');
-            $table->index('last_activity', 'sessions_last_activity_index');
-        });
+        //     $table->index('user_id', 'sessions_user_id_index');
+        //     $table->index('last_activity', 'sessions_last_activity_index');
+        // });
 
         Schema::create('queue_jobs', function (Blueprint $table) {
             $table->bigIncrements('id');
@@ -481,7 +481,7 @@ return new class extends Migration
         Schema::dropIfExists('users');
 
         Schema::dropIfExists('queue_jobs');
-        Schema::dropIfExists('sessions');
+        // Schema::dropIfExists('sessions');
         // Schema::dropIfExists('personal_access_tokens');
         // Schema::dropIfExists('password_reset_tokens');
         // Schema::dropIfExists('migrations');
