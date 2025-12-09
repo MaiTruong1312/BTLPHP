@@ -12,6 +12,10 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
+# --- FIX AH00558 HERE ---
+COPY apache/servername.conf /etc/apache2/conf-enabled/servername.conf
+# -------------------------
+
 # Install system packages
 RUN apt-get update && apt-get install -y \
     zip unzip git curl libpng-dev libonig-dev libxml2-dev libzip-dev
@@ -22,14 +26,14 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring zip gd
 # Copy project
 COPY . /var/www/html
 
-# Set working directory
 WORKDIR /var/www/html
 
-# Install composer
+# Install composer (production)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 RUN composer install --no-dev --optimize-autoloader
 
-# Permissions (Fix 403 Forbidden)
+# Permissions (403 fix)
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \
     && chmod -R 775 storage bootstrap/cache
