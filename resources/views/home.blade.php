@@ -345,7 +345,7 @@
                 <span class="text-xs font-semibold text-gray-800">Bạn là nhà tuyển dụng?</span>
                 <span class="text-[11px] text-gray-500">Đăng tin tuyển dụng chỉ trong vài phút.</span>
             </div>
-            <a href="{{ route('jobs.create') }}"
+            <a href="{{ route('employer.jobs.create') }}"
                class="ml-2 inline-flex items-center px-3 py-1.5 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700">
                 Post a job
             </a>
