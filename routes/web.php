@@ -25,7 +25,7 @@ use App\Http\Controllers\VNPayController;
 
 Route::get('/employer/subscriptions/vnpay-return', [SubscriptionController::class, 'vnpayReturn'])->name('employer.subscriptions.vnpay_return');
 Route::get('/employer/subscriptions/vnpay-ipn', [SubscriptionController::class, 'vnpayIpn'])->name('employer.subscriptions.vnpay_ipn');
-
+// Route cho Trang Thông báo Xác thực Email đã được gửi
 Route::middleware('web')->group(function () {
     // Home
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['signed', 'throttle:6,1'])->group(function () {
-    Route::get('/email/verify/{id}/{hash}', function ( $request, $id, $hash) {
+    Route::get('/email/verify/{id}/{hash}', function ( $id, $hash) {
         $user = \App\Models\User::findOrFail($id);
 
         if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {

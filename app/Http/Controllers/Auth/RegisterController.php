@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -69,4 +70,46 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
+        protected function registered(Request $request, $user)
+    {
+        // Thêm thông báo vào session
+        session()->flash('status', 'Đăng ký thành công! Chúng tôi đã gửi một liên kết xác thực đến địa chỉ email của bạn. Vui lòng kiểm tra hộp thư đến (và cả thư mục spam) để hoàn tất xác thực.');
+    }
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        $user = $this->create($request->all());
+
+        // Ghi đè hành vi mặc định: KHÔNG TỰ ĐỘNG ĐĂNG NHẬP
+        $user->sendEmailVerificationNotification();
+
+        // Gọi hàm registered() để tạo thông báo session
+        $this->registered($request, $user);
+
+        // Chuyển hướng đến trang đăng nhập/thông báo
+        return redirect($this->redirectPath());
+    }
+
+    //  THÊM ĐOẠN 2: Ghi đè hàm redirectPath() 
+    /**
+     * Get the post register redirect path.
+     *
+     * @return string
+     */
+    public function redirectPath()
+    {
+        // Trả về route đăng nhập thay vì /home
+
+        return route('login');
+    }
 }
+
+
+

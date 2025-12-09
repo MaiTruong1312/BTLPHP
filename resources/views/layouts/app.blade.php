@@ -282,6 +282,30 @@
             </div>
         </div>
         @endif
+        @if(session('status'))
+<div x-data="{show:true}" 
+      x-show="show" 
+      x-transition 
+      class="max-w-7xl mx-auto mb-6 px-4 sm:px-6 lg:px-8">
+    
+    {{-- Sử dụng style CSS đẹp mắt cho thông báo --}}
+    <div class="bg-indigo-100 border-l-4 border-indigo-500 text-indigo-800 p-4 rounded shadow-md flex justify-between items-center" role="alert">
+        <div class="flex items-center space-x-3">
+            {{-- Biểu tượng thư (nếu bạn có Font Awesome hoặc Tailwind Icons) --}}
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            
+            <p class="font-medium">
+                {{ session('status') }}
+            </p>
+        </div>
+        {{-- Nút đóng thông báo --}}
+        <button @click="show=false" class="text-indigo-700 hover:text-indigo-900 text-xl font-bold ml-4">×</button>
+    </div>
+    
+</div>
+@endif
 
 
         <!-- ACTUAL PAGE CONTENT -->

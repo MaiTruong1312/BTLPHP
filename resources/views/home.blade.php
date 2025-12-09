@@ -339,7 +339,7 @@
     <div class="fixed bottom-6 right-6 z-40 hidden md:flex">
         <div class="bg-white/95 border border-blue-100 shadow-2xl rounded-2xl px-4 py-3 flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg">
-                📢
+                📢c
             </div>
             <div class="flex flex-col">
                 <span class="text-xs font-semibold text-gray-800">Bạn là nhà tuyển dụng?</span>
