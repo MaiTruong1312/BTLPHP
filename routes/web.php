@@ -202,11 +202,23 @@ Route::middleware('web')->group(function () {
             Route::get('/applications/job/{job}', [EmployerApplicationController::class, 'showApplicants'])
                 ->name('applications.showApplicants');
 
+            // Emailing Applicants
+            Route::get('/applications/{application}/email', [EmployerApplicationController::class, 'showEmailForm'])->name('applications.email.show');
+            Route::post('/applications/{application}/email', [EmployerApplicationController::class, 'sendEmail'])->name('applications.email.send');
+
             // Email templates
             Route::resource('templates', EmailTemplateController::class);
 
             // Subscription
             Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+
+            // Job Management (Moved here for consistency)
+            Route::get('/jobs/create', [JobController::class, 'create'])->name('jobs.create');
+            Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
+            Route::get('/jobs/{job}/edit', [JobController::class, 'edit'])->name('jobs.edit');
+            Route::put('/jobs/{job}', [JobController::class, 'update'])->name('jobs.update');
+            Route::delete('/jobs/{job}', [JobController::class, 'destroy'])->name('jobs.destroy');
+            Route::get('/jobs/{job}/applications', [JobController::class, 'showApplicants'])->name('jobs.applicants');
         });
 
 
@@ -216,13 +228,6 @@ Route::middleware('web')->group(function () {
         |--------------------------------------------------------------------------
         */
         Route::middleware('role:employer,admin')->group(function () {
-            Route::get('/jobs/create', [JobController::class, 'create'])->name('jobs.create');
-            Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
-            Route::get('/jobs/{job}/edit', [JobController::class, 'edit'])->name('jobs.edit');
-            Route::put('/jobs/{job}', [JobController::class, 'update'])->name('jobs.update');
-            Route::delete('/jobs/{job}', [JobController::class, 'destroy'])->name('jobs.destroy');
-            Route::get('/jobs/{job}/applications', [JobController::class, 'showApplicants'])->name('jobs.applicants');
-
             // Blog (Employer Dashboard)
             Route::get('/dashboard/blog/create', [BlogController::class, 'create'])->name('blog.create');
             Route::post('/dashboard/blog', [BlogController::class, 'store'])->name('blog.store');
@@ -275,4 +280,3 @@ Route::middleware('web')->group(function () {
 
     }); // END Authenticated
 }); // END Middleware Web
-
