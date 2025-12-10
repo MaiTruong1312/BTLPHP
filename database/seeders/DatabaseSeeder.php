@@ -2,15 +2,36 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\PostSeeder;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run(): void
+    /**
+     * Seed the application's database.
+     *
+     * @return void
+     */
+    public function run()
     {
-        $this->call(PostSeeder::class);
+        $this->call([
+            UserSeeder::class,
+            EmployerProfileSeeder::class,
+            CandidateProfileSeeder::class,
+            JobCategorySeeder::class,
+            JobLocationSeeder::class,
+            SkillSeeder::class,
+            JobSeeder::class,
+            JobSkillSeeder::class,
+            CandidateSkillSeeder::class,
+            CandidateEducationSeeder::class,
+            CandidateExperienceSeeder::class,
+            JobApplicationSeeder::class,
+            CommentSeeder::class,
+            PostSeeder::class,
+            PlanSeeder::class,
+            SubscriptionSeeder::class,
+            EmailTemplateSeeder::class,
+            SavedJobSeeder::class,
+        ]);
     }
 }

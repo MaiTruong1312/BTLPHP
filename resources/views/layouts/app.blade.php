@@ -86,10 +86,14 @@
                class="block px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">
                 Blog
             </a>
+            <a href="{{ route('about') }}" 
+               class="block px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">
+                About
+            </a>
 
             @auth
                 @if(auth()->user()->isEmployer())
-                    <a href="{{ route('jobs.create') }}"
+                    <a href="{{ route('employer.jobs.create') }}"
                        class="block px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">
                        Post a Job
                     </a>
@@ -162,6 +166,7 @@
                 <div class="hidden sm:flex items-center space-x-4">
                     <a href="{{ route('home') }}" class="nav-link">Jobs</a>
                     <a href="{{ route('blog.index') }}" class="nav-link">Blog</a>
+                    <a href="{{ route('about') }}" class="nav-link">About</a>
 
                     @can('search-candidates')
                          <a href="{{ route('candidates.search') }}" class="nav-link">Find Candidates</a>
@@ -169,7 +174,7 @@
 
                     @auth
                         @if(auth()->user()->isEmployer())
-                            <a href="{{ route('jobs.create') }}" class="nav-btn">Post a Job</a>
+                            <a href="{{ route('employer.jobs.create') }}" class="nav-btn">Post a Job</a>
                         @endif
                     @endauth
                 </div>
@@ -195,33 +200,13 @@
 
                     <!-- USER MENU -->
                     @auth
-                    <div x-data="{userMenu:false}" class="relative">
-                        <button @click="userMenu=!userMenu" id="user-menu-button" class="flex items-center space-x-2">
+                    <div class="relative">
+                        <div id="user-menu-button" class="flex items-center space-x-2 cursor-pointer">
                             <img class="h-10 w-10 rounded-full"
                                  src="{{ auth()->user()->avatar 
                                      ? asset('storage/'.auth()->user()->avatar)
                                      : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) }}">
-                            <span class="text-gray-700">{{ auth()->user()->name }}</span>
-                        </button>
-
-                        <div x-show="userMenu" @click.away="userMenu=false"
-                            class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-50 py-2">
-
-                            <a href="{{ route('dashboard') }}" class="dropdown-item">Dashboard</a>
-                            <a href="{{ route('profile.show') }}" class="dropdown-item">My Profile</a>
-
-                            @if(auth()->user()->isCandidate())
-                                <a href="{{ route('applications.index') }}" class="dropdown-item">My Applications</a>
-                                <a href="{{ route('saved-jobs.index') }}" class="dropdown-item">Saved Jobs</a>
-                            @endif
-
-                            <div class="border-t my-1"></div>
-
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button class="dropdown-item text-red-600">Logout</button>
-                            </form>
-
+                            <span class="text-gray-700 whitespace-nowrap">{{ auth()->user()->name }}</span>
                         </div>
                     </div>
                     @endauth
@@ -304,12 +289,12 @@
             if (userMenuBtn) {
                 const rect = userMenuBtn.getBoundingClientRect();
                 position.x = rect.right + 20;
-                position.y = rect.top + (rect.height / 2) - 28; // 28 là một nửa chiều cao của nút
+                position.y = rect.top + (rect.height / 2) - 28;
             }
          "
          @mousemove.window="if (dragging) {
-            position.x = $event.clientX - 28; /* 28 là một nửa chiều rộng của nút (w-14) */
-            position.y = $event.clientY - 28; /* 28 là một nửa chiều cao của nút (h-14) */
+            position.x = $event.clientX - 28;
+            position.y = $event.clientY - 28;
          }"
          @mouseup.window="dragging = false"
          @click="if (!dragging) {
@@ -327,7 +312,7 @@
         <!-- Button -->
         <button 
             @mousedown="
-                if ($event.target === $el) { // Chỉ kéo khi nhấn vào nút, không phải popup
+                if ($event.target === $el) {
                     dragging = true;
                 }
             "
@@ -356,7 +341,7 @@
 
                 {{-- Chỉ hiển thị cho nhà tuyển dụng --}}
                 @if(auth()->user()->isEmployer())
-                    <a href="{{ route('jobs.create') }}" class="quick-item">Post a New Job</a>
+                    <a href="{{ route('employer.jobs.create') }}" class="quick-item">Post a New Job</a>
                 @endif
 
                 <form method="POST" action="{{ route('logout') }}" class="mt-2 border-t pt-2">
@@ -365,23 +350,6 @@
                 </form>
             @endauth
         </div>
-    </div>
-
-
-    <!-- SPOTIFY MINI PLAYER -->
-    <div class="fixed bottom-6 left-6 w-64 glass p-4 rounded-xl shadow-xl">
-        <h3 class="font-semibold text-gray-800 mb-2 text-sm flex justify-between">
-            Spotify Mini Player
-            <button onclick="document.getElementById('spotifyFrame').classList.toggle('hidden')" class="text-xs text-indigo-600">Toggle</button>
-        </h3>
-
-        <iframe id="spotifyFrame"
-                style="border-radius:8px"
-                src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator"
-                width="100%" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                class="shadow-md">
-        </iframe>
     </div>
 
 
@@ -440,7 +408,7 @@
             <div>
                 <h4 class="text-white text-sm uppercase mb-4">Employers</h4>
                 <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="{{ route('jobs.create') }}" class="hover:text-white">Post a Job</a></li>
+                    <li><a href="{{ route('employer.jobs.create') }}" class="hover:text-white">Post a Job</a></li>
                     <li><a href="{{ route('dashboard') }}" class="hover:text-white">Manage Jobs</a></li>
                     <li><a href="{{ route('admin.applications.index') }}" class="hover:text-white">Manage Applications</a></li>
                 </ul>
@@ -465,100 +433,8 @@
     </footer>
 
 
-    <!-- ========================================= -->
-    <!-- 🌟 WIDGET 1 — Random Job Quote (Auto Change) -->
-    <!-- ========================================= -->
-    <div class="fixed bottom-6 right-[26rem] bg-white shadow-xl p-4 rounded-xl w-60 border z-40"
-         x-data="{quoteIndex:0, quotes:[
-             'Success is not for the lazy.',
-             'Do what you love and success will follow.',
-             'The future depends on what you do today.',
-             'Dream big. Work hard. Stay focused.',
-             'Opportunities don’t happen. You create them.'
-         ]}"
-         x-init="setInterval(()=>quoteIndex=(quoteIndex+1)%quotes.length, 5000)"
-    >
-        <h4 class="font-semibold text-gray-700 text-sm mb-2">✨ Motivational</h4>
-        <p class="text-gray-600 text-sm" x-text="quotes[quoteIndex]"></p>
-    </div>
+    
 
-
-    <!-- ========================================= -->
-    <!-- 🌤️ WIDGET 2 — Weather Quick Popup         -->
-    <!-- ========================================= -->
-    <div x-data="{showWeather:false, weather:{temp:0,desc:'...'}}"
-         x-init="fetch('https://api.open-meteo.com/v1/forecast?latitude=21.02&longitude=105.83&current_weather=true')
-                 .then(res=>res.json())
-                 .then(data=>{
-                     weather.temp = data.current_weather.temperature;
-                     weather.desc = data.current_weather.weathercode;
-                 })"
-         class="fixed bottom-6 left-80 z-40">
-
-        <button @click="showWeather=!showWeather"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
-            🌤️ Weather
-        </button>
-
-        <div x-show="showWeather" x-transition @click.away="showWeather=false"
-             class="mt-3 bg-white border shadow-xl p-4 rounded-xl w-56">
-            <h4 class="font-semibold text-gray-700 mb-2 text-sm">Hà Nội — Current Weather</h4>
-            <p class="text-gray-800 text-xl font-bold" x-text="weather.temp + '°C'"></p>
-            <p class="text-gray-500 text-sm mt-1">Code: <span x-text="weather.desc"></span></p>
-        </div>
-    </div>
-
-
-    <!-- ========================================= -->
-    <!-- 💬 WIDGET 3 — Quick Mini Support Chat     -->
-    <!-- ========================================= -->
-    <div x-data="{
-            openChat: false,
-            draggingChat: false,
-            chatPosition: { x: 300, y: window.innerHeight - 100 },
-            messages:['Hi! Tôi có thể giúp gì cho bạn?']
-         }"
-         @mousemove.window="if (draggingChat) {
-            chatPosition.x = $event.clientX - 28;
-            chatPosition.y = $event.clientY - 28;
-         }"
-         @mouseup.window="draggingChat = false"
-         :style="`position: fixed; top: ${chatPosition.y}px; left: ${chatPosition.x}px;`"
-         class="z-40 cursor-grab"
-         :class="{ 'cursor-grabbing': draggingChat }"
-    >
-
-        <button @click="!draggingChat && (openChat = !openChat)"
-                @mousedown="
-                    if ($event.target === $el) {
-                        draggingChat = true;
-                    }
-                "
-                class="bg-green-600 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow hover:bg-green-700">
-            💬
-        </button>
-
-        <div x-show="openChat" x-transition @click.away="openChat=false"
-             class="absolute bottom-full mb-2 bg-white border rounded-xl shadow-xl w-72 p-4 cursor-default">
-
-            <h3 class="text-sm font-semibold text-gray-700 mb-3">Hỗ trợ nhanh</h3>
-
-            <div class="h-40 overflow-y-auto space-y-2 mb-3">
-                <template x-for="msg in messages">
-                    <div class="bg-gray-100 p-2 rounded-md text-sm" x-text="msg"></div>
-                </template>
-            </div>
-
-            <input type="text"
-                   placeholder="Nhập câu hỏi…"
-                   class="border rounded-lg w-full px-3 py-2 text-sm"
-                   @keydown.enter="
-                       if($event.target.value.trim()!=''){
-                            messages.push($event.target.value);
-                            $event.target.value='';
-                       }
-                   ">
-        </div>
 
     </div>
     <!-- ========================================================= -->
