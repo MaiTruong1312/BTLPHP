@@ -19,7 +19,7 @@
             @endcan
 
             <a href="{{ route('blog.create') }}" class="bg-green-500 text-white px-4 py-2 rounded-md">Create Post</a>
-            <a href="{{ route('jobs.create') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Post a New Job</a>
+            <a href="{{ route('employer.jobs.create') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Post a New Job</a>
             <a href="{{ route('employer.applications.index') }}" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700">Manage Apps</a>
         </div>
     </div>
@@ -69,7 +69,7 @@
                                 <h3 class="font-semibold"><a href="{{ route('jobs.show', $job->slug) }}" class="text-blue-600 hover:underline">{{ $job->title }}</a></h3>
                                 <p class="text-sm text-gray-500">Posted: {{ $job->created_at->diffForHumans() }}</p>
                             </div>
-                            <a href="{{ route('jobs.applicants', $job->id) }}" class="text-green-600 hover:underline">View Applications</a>
+                            <a href="{{ route('employer.jobs.applicants', $job->id) }}" class="text-green-600 hover:underline">View Applications</a>
                         </div>
                     </div>
                 @endforeach
@@ -79,7 +79,7 @@
                 {{ $jobs->links() }}
             </div>
         @else
-            <p class="text-gray-500">You have not posted any jobs yet. <a href="{{ route('jobs.create') }}" class="text-blue-600 hover:underline">Post one now!</a></p>
+            <p class="text-gray-500">You have not posted any jobs yet. <a href="{{ route('employer.jobs.create') }}" class="text-blue-600 hover:underline">Post one now!</a></p>
         @endif
     </div>
 </div>

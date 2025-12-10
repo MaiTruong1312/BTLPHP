@@ -7,7 +7,7 @@
     <h1 class="text-3xl font-bold mb-6">Post a New Job</h1>
 
     <div class="bg-white rounded-lg shadow-md p-8">
-        <form action="{{ route('jobs.store') }}" method="POST">
+        <form action="{{ route('employer.jobs.store') }}" method="POST">
             @csrf
 
             <div class="mb-6">
@@ -153,7 +153,7 @@
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
                     Post Job
                 </button>
-                <a href="{{ route('jobs.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded">
+                <a href="{{ route('dashboard') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded">
                     Cancel
                 </a>
             </div>
@@ -161,4 +161,3 @@
     </div>
 </div>
 @endsection
-
