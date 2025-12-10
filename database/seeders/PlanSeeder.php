@@ -2,49 +2,27 @@
 
 namespace Database\Seeders;
 
-use App\Models\Plan;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class PlanSeeder extends Seeder
 {
-    public function run(): void
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
     {
-        // Tắt khóa ngoại để truncate không lỗi
-        Schema::disableForeignKeyConstraints();
-        Plan::truncate();
-        Schema::enableForeignKeyConstraints();
-
-        Plan::create([
-            'name' => 'Basic',
-            'slug' => 'basic',
-            'price' => 0,
-            'features' => [
-                'post_jobs_limit' => 1,
-                'can_search_cvs' => false,
-                'featured_jobs' => 0,
+        DB::table('plans')->insert([
+            [
+                'id' => 1, 'name' => 'Basic', 'slug' => 'basic', 'price' => 0.00, 'features' => '{"post_jobs_limit":10,"can_search_cvs":false,"featured_jobs":0}', 'created_at' => '2025-12-02 22:21:32', 'updated_at' => '2025-12-02 22:21:32'
             ],
-        ]);
-
-        Plan::create([
-            'name' => 'Standard',
-            'slug' => 'standard',
-            'price' => 499000,
-            'features' => [
-                'post_jobs_limit' => 5,
-                'can_search_cvs' => false,
-                'featured_jobs' => 2,
+            [
+                'id' => 2, 'name' => 'Standard', 'slug' => 'standard', 'price' => 499000.00, 'features' => '{"post_jobs_limit":20,"can_search_cvs":false,"featured_jobs":2}', 'created_at' => '2025-12-02 22:21:32', 'updated_at' => '2025-12-02 22:21:32'
             ],
-        ]);
-
-        Plan::create([
-            'name' => 'Premium',
-            'slug' => 'premium',
-            'price' => 999000,
-            'features' => [
-                'post_jobs_limit' => -1,
-                'can_search_cvs' => true,
-                'featured_jobs' => 5,
+            [
+                'id' => 3, 'name' => 'Premium', 'slug' => 'premium', 'price' => 999000.00, 'features' => '{"post_jobs_limit":-1,"can_search_cvs":true,"featured_jobs":5}', 'created_at' => '2025-12-02 22:21:32', 'updated_at' => '2025-12-02 22:21:32'
             ],
         ]);
     }
