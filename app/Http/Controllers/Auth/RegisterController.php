@@ -4,95 +4,91 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\CandidateProfile;
-use App\Models\EmployerProfile;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered; // Thêm thư viện này
 
 class RegisterController extends Controller
 {
-    public function showRegistrationForm()
+    /*
+    |--------------------------------------------------------------------------
+    | Register Controller
+    |--------------------------------------------------------------------------
+    */
+
+    use RegistersUsers;
+
+    /**
+     * Nơi chuyển hướng mặc định (sẽ bị ghi đè bởi redirectPath() dưới đây).
+     *
+     * @var string
+     */
+    protected $redirectTo = '/home';
+
+    /**
+     * Tạo một controller instance mới.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        return view('auth.register');
+        $this->middleware('guest');
     }
 
     /**
-     * Xử lý yêu cầu đăng ký cho ứng dụng: 
-     * 1. Tạo User & Profile. 
-     * 2. Gửi Email Xác thực.
+     * Lấy trình xác thực cho yêu cầu đăng ký.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
      */
-    public function register(Request $request)
+    protected function validator(array $data)
     {
-        // 1. Validation 
-        $validator = Validator::make($request->all(), [
+        return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'in:candidate,employer'],
-            'company_name' => ['nullable', 'string', 'max:191'],
         ]);
+    }
 
-        $validator->sometimes('company_name', 'required', function ($input) {
-            return $input->role === 'employer';
-        });
+    /**
+     * Tạo một user instance mới sau khi đăng ký hợp lệ.
+     *
+     * @param  array  $data
+     * @return \App\Models\User
+     */
+    protected function create(array $data)
+    {
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
+    }
 
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        try {
-            // 2. Tạo User và Profile trong DB::transaction
-            $user = DB::transaction(function () use ($request) {
-                $user = User::create([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'password' => Hash::make($request->password),
-                    'role' => $request->role,
-                ]);
-
-                if ($request->role === 'candidate') {
-                    CandidateProfile::create(['user_id' => $user->id]);
-                } else {
-                    $companyName = $request->company_name ?? 'Company '.$user->id;
-                    $slugBase = Str::slug($companyName);
-                    $slug = $slugBase;
-                    $counter = 1;
-                    while (EmployerProfile::where('company_slug', $slug)->exists()) {
-                        $slug = $slugBase.'-'.$counter++;
-                    }
-
-                    EmployerProfile::create([
-                        'user_id' => $user->id,
-                        'company_name' => $companyName,
-                        'company_slug' => $slug,
-                    ]);
-                }
-                return $user;
-            });
-        } catch (\Exception $e) {
-            \Log::error('Registration Error: ' . $e->getMessage());
-            throw $e;
-        }
-
-        // 3. Logic Ghi đè Hành vi Mặc định:
+    /**
+     * Ghi đè hàm register() từ RegistersUsers để xử lý xác thực email (KHÔNG TỰ ĐỘNG ĐĂNG NHẬP).
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
         
-        // Gửi sự kiện Registered
-        event(new Registered($user));
-        
-        // Gửi email xác thực (KHÔNG TỰ ĐỘNG ĐĂNG NHẬP)
+        event(new Registered($user = $this->create($request->all())));
+
+        // Gửi email xác thực (Không tự động đăng nhập)
         $user->sendEmailVerificationNotification();
 
         // Gọi hàm registered() để tạo thông báo session
         $this->registered($request, $user);
 
-        // Chuyển hướng đến trang đăng nhập
-        return redirect($this->redirectPath());
+        // Chuyển hướng đến trang thông báo
+        return $this->registered($request, $user)
+                        ?: redirect($this->redirectPath());
     }
-
 
     /**
      * Ghi đè hàm registered() để thêm thông báo flash sau khi đăng ký.
@@ -104,10 +100,13 @@ class RegisterController extends Controller
     }
 
     /**
-     * Ghi đè hàm redirectPath(): Chuyển hướng đến route đăng nhập thay vì /home.
+     * Ghi đè hàm redirectPath() để chuyển hướng đến trang thông báo xác thực.
+     *
+     * @return string
      */
     public function redirectPath()
     {
-        return route('login');
+        // Trả về route của trang thông báo xác thực
+        return route('verification.notice');
     }
 }
