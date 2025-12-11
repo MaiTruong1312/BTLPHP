@@ -15,22 +15,18 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy composer files trước
 COPY composer.json composer.lock ./
 
-# Install vendor KHÔNG chạy script Laravel
+# FIX QUAN TRỌNG – KHÔNG CHẠY ARTISAN
 RUN composer install \
     --no-dev \
+    --no-scripts \
     --prefer-dist \
     --no-progress \
-    --no-scripts \
-    --ignore-platform-reqs \
     --optimize-autoloader
 
-# Copy toàn bộ source code
 COPY . .
 
-# Quyền lỗi nếu không đặt
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
