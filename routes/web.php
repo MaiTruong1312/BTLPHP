@@ -295,6 +295,7 @@ Route::middleware('web')->group(function () {
 
             // Applications
             Route::get('/applications', [AdminApplicationController::class, 'index'])->name('applications.index');
+            Route::get('/applications/{application}', [AdminApplicationController::class, 'show'])->name('applications.show');
             Route::patch('/applications/{application}/status', [AdminApplicationController::class, 'updateStatus'])->name('applications.update-status');
             Route::delete('/applications/{application}', [AdminApplicationController::class, 'destroy'])->name('applications.destroy');
         });
