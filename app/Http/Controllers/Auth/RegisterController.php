@@ -66,7 +66,7 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
-
+    
     /**
      * Ghi đè hàm register() từ RegistersUsers để xử lý xác thực email (KHÔNG TỰ ĐỘNG ĐĂNG NHẬP).
      *
