@@ -106,7 +106,7 @@ class JobApplicationSeeder extends Seeder
                 'applied_at' => '2025-11-30 09:13:12',
                 'created_at' => '2025-11-30 09:13:12',
             ],
-            [
+            [   
                 'id' => 11,
                 'job_id' => 8,
                 'user_id' => 3,

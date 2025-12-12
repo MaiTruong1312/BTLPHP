@@ -4,79 +4,107 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\CandidateProfile;
-use App\Models\EmployerProfile;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
-    public function showRegistrationForm()
+    /*
+    |--------------------------------------------------------------------------
+    | Register Controller
+    |--------------------------------------------------------------------------
+    */
+
+    use RegistersUsers;
+
+    /**
+     * Nơi chuyển hướng mặc định (sẽ bị ghi đè bởi redirectPath() dưới đây).
+     *
+     * @var string
+     */
+    protected $redirectTo = '/home';
+
+    /**
+     * Tạo một controller instance mới.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        return view('auth.register');
+        $this->middleware('guest');
     }
 
-    public function register(Request $request)
+    /**
+     * Lấy trình xác thực cho yêu cầu đăng ký.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator(array $data)
     {
-        $validator = Validator::make($request->all(), [
+        return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'in:candidate,employer'],
-            'company_name' => ['nullable', 'string', 'max:191'],
+            'role' => ['required', 'string', 'in:candidate,employer'],
         ]);
+    }
 
-        $validator->sometimes('company_name', 'required', function ($input) {
-            return $input->role === 'employer';
-        });
+    /**
+     * Tạo một user instance mới sau khi đăng ký hợp lệ.
+     *
+     * @param  array  $data
+     * @return \App\Models\User
+     */
+    protected function create(array $data)
+    {
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'role' => $data['role'],
+            'password' => Hash::make($data['password']),
+        ]);
+    }
+    
+    /**
+     * Ghi đè hàm register() từ RegistersUsers để xử lý xác thực email (KHÔNG TỰ ĐỘNG ĐĂNG NHẬP).
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+        
+        event(new Registered($user = $this->create($request->all())));
 
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
 
-        try {
-            $user = DB::transaction(function () use ($request) {
-                $user = User::create([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'password' => Hash::make($request->password),
-                    'role' => $request->role,
-                ]);
+        $this->registered($request, $user);
 
-                if ($request->role === 'candidate') {
-                    CandidateProfile::create(['user_id' => $user->id]);
-                } else {
-                    $companyName = $request->company_name ?? 'Company '.$user->id;
-                    $slugBase = Str::slug($companyName);
-                    $slug = $slugBase;
-                    $counter = 1;
-                    while (EmployerProfile::where('company_slug', $slug)->exists()) {
-                        $slug = $slugBase.'-'.$counter++;
-                    }
+        // Chuyển hướng đến trang thông báo
+        return $this->registered($request, $user)
+                        ?: redirect($this->redirectPath());
+    }
 
-                    EmployerProfile::create([
-                        'user_id' => $user->id,
-                        'company_name' => $companyName,
-                        'company_slug' => $slug,
-                    ]);
-                }
+    /**
+     * Ghi đè hàm registered() để thêm thông báo flash sau khi đăng ký.
+     */
+    protected function registered(Request $request, $user)
+    {
+        // Thêm thông báo vào session
+        session()->flash('status', 'Đăng ký thành công! Chúng tôi đã gửi một liên kết xác thực đến địa chỉ email của bạn. Vui lòng kiểm tra hộp thư đến (và cả thư mục spam) để hoàn tất xác thực.');
+    }
 
-                return $user;
-            });
-        } catch (\Exception $e) {
-            \Log::error('Registration Error: ' . $e->getMessage());
-            throw $e;
-        }
-
-        event(new Registered($user));
-
-        auth()->login($user);
-
-        return redirect()->route('dashboard')->with('success', 'Welcome to Job Portal!');
+    /**
+     * Ghi đè hàm redirectPath() để chuyển hướng đến trang thông báo xác thực.
+     *
+     * @return string
+     */
+    public function redirectPath()
+    {
+        return route('login');
     }
 }
-

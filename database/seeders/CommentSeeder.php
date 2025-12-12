@@ -94,3 +94,4 @@ class CommentSeeder extends Seeder
         ]);
     }
 }
+

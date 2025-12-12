@@ -33,10 +33,32 @@ use App\Http\Controllers\Employer\ApplicationController as EmployerApplicationCo
 use App\Http\Controllers\Employer\EmailTemplateController;
 use Illuminate\Support\Facades\Artisan;
 
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Notifications\WelcomeNotification;
+
 Route::get('/run-migrate', function () {
     Artisan::call('migrate', ['--force' => true]);
     return 'Migrated successfully!';
 });
+
+/*
+|--------------------------------------------------------------------------
+| forgot-password
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
+    ->name('password.request');
+
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])
+    ->name('password.reset');
+
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])
+    ->name('password.update');
 
 /*
 |--------------------------------------------------------------------------
@@ -122,6 +144,7 @@ Route::middleware('web')->group(function () {
             if (! $user->hasVerifiedEmail()) {
                 $user->markEmailAsVerified();
                 event(new \Illuminate\Auth\Events\Verified($user));
+                $user->notify(new WelcomeNotification());
             }
 
             return redirect('/login')->with('success', 'Email verified. Please login.');
@@ -274,6 +297,7 @@ Route::middleware('web')->group(function () {
 
             // Applications
             Route::get('/applications', [AdminApplicationController::class, 'index'])->name('applications.index');
+            Route::get('/applications/{application}', [AdminApplicationController::class, 'show'])->name('applications.show');
             Route::patch('/applications/{application}/status', [AdminApplicationController::class, 'updateStatus'])->name('applications.update-status');
             Route::delete('/applications/{application}', [AdminApplicationController::class, 'destroy'])->name('applications.destroy');
         });

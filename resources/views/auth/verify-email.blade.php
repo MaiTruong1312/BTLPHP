@@ -32,7 +32,7 @@
             </a>
 
             {{-- Nút gửi lại email --}}
-            <form method="POST" action="{{ route('verification.resend') }}">
+            <form method="POST" action="{{ route('verification.send') }}">
                 @csrf
                 <button type="submit"
                         class="w-full py-3 bg-gray-600 text-white rounded-xl font-semibold
