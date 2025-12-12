@@ -49,6 +49,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'string', 'in:candidate,employer'],
         ]);
     }
 
@@ -63,6 +64,7 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'role' => $data['role'],
             'password' => Hash::make($data['password']),
         ]);
     }
@@ -79,10 +81,7 @@ class RegisterController extends Controller
         
         event(new Registered($user = $this->create($request->all())));
 
-        // Gửi email xác thực (Không tự động đăng nhập)
-        $user->sendEmailVerificationNotification();
 
-        // Gọi hàm registered() để tạo thông báo session
         $this->registered($request, $user);
 
         // Chuyển hướng đến trang thông báo
@@ -106,7 +105,6 @@ class RegisterController extends Controller
      */
     public function redirectPath()
     {
-        // Trả về route của trang thông báo xác thực
-        return route('verification.notice');
+        return route('login');
     }
 }
