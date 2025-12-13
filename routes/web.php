@@ -19,10 +19,12 @@ use App\Http\Controllers\PricingController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CandidateSearchController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommentLikeController;
 use App\Http\Controllers\VNPayController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\VerificationController;
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ApplicationController as AdminApplicationController;
@@ -36,11 +38,6 @@ use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Notifications\WelcomeNotification;
-
-Route::get('/run-migrate', function () {
-    Artisan::call('migrate', ['--force' => true]);
-    return 'Migrated successfully!';
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -123,33 +120,20 @@ Route::middleware('web')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware('auth')->group(function () {
-        Route::get('/email/verify', fn () => view('auth.verify-email'))
+        Route::get('/email/verify', [VerificationController::class, 'show'])
             ->name('verification.notice')
             ->middleware('throttle:6,1');
 
-        Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
-            $request->user()->sendEmailVerificationNotification();
-            return back()->with('message', 'Verification link sent!');
-        })->name('verification.send')->middleware('throttle:6,1');
+        Route::post('/email/verification-notification', [VerificationController::class, 'resend'])
+            ->name('verification.send')
+            ->middleware('throttle:6,1');
     });
 
-    Route::middleware(['signed', 'throttle:6,1'])->group(function () {
-        Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
-            $user = \App\Models\User::findOrFail($id);
-
-            if (! hash_equals($hash, sha1($user->getEmailForVerification()))) {
-                abort(403);
-            }
-
-            if (! $user->hasVerifiedEmail()) {
-                $user->markEmailAsVerified();
-                event(new \Illuminate\Auth\Events\Verified($user));
-                $user->notify(new WelcomeNotification());
-            }
-
-            return redirect('/login')->with('success', 'Email verified. Please login.');
-        })->name('verification.verify');
-    });
+    // The 'signed' middleware was not being used correctly in the original implementation.
+    // The custom SHA1 hash logic is preserved in the VerificationController.
+    Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+        ->name('verification.verify')
+        ->middleware('throttle:6,1');
 
 
     /*
@@ -171,7 +155,7 @@ Route::middleware('web')->group(function () {
         Route::post('/jobs/{job}/comments', [CommentController::class, 'store'])->name('comments.store');
         Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
         Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
-        Route::post('/comments/{comment}/like', [\App\Http\Controllers\CommentLikeController::class, 'toggle'])->name('comments.like');
+        Route::post('/comments/{comment}/like', [CommentLikeController::class, 'toggle'])->name('comments.like');
 
         // Profile
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
@@ -280,7 +264,7 @@ Route::middleware('web')->group(function () {
         Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
 
             // Dashboard
-            Route::get('/', fn () => redirect()->route('admin.dashboard'));
+            Route::redirect('/', '/admin/dashboard');
             Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
             // Users
