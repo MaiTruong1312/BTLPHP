@@ -38,8 +38,4 @@ RUN chown -R www-data:www-data /var/www/html \
 # 11. Chạy lệnh tối ưu sau khi build
 RUN php artisan config:cache && \
     php artisan route:cache && \
-<<<<<<< HEAD
     php artisan view:cache
-=======
-    php artisan view:cache
->>>>>>> 5a989a24ce169d27d121ad6e4fd09d30e41d4c28
