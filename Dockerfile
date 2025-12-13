@@ -11,6 +11,9 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring zip gd
 # 3. Bật mod_rewrite cho Apache (để chạy .htaccess)
 RUN a2enmod rewrite
 
+# 3.1. Tắt các MPM có khả năng gây xung đột
+RUN a2dismod mpm_event mpm_worker
+
 # 4. Thiết lập thư mục gốc cho Apache trỏ vào /public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
@@ -38,8 +41,4 @@ RUN chown -R www-data:www-data /var/www/html \
 # 11. Chạy lệnh tối ưu sau khi build
 RUN php artisan config:cache && \
     php artisan route:cache && \
-<<<<<<< HEAD
     php artisan view:cache
-=======
-    php artisan view:cache
->>>>>>> 5a989a24ce169d27d121ad6e4fd09d30e41d4c28
