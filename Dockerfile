@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install \
     pdo pdo_mysql mbstring zip gd
 
-# 3. Apache: FIX LỖI AH00534 (Xóa thẳng tay file config gây xung đột)
-# Thay vì disable, ta xóa luôn symlink của mpm_event và mpm_worker
+# 3. Apache: FIX LỖI AH00534 (XÓA CỨNG FILE CẤU HÌNH)
+# Thay vì disable, ta xóa luôn file config của mpm_event và mpm_worker để tránh xung đột
 RUN rm -f /etc/apache2/mods-enabled/mpm_event.load \
     && rm -f /etc/apache2/mods-enabled/mpm_event.conf \
     && rm -f /etc/apache2/mods-enabled/mpm_worker.load \
