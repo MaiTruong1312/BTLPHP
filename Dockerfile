@@ -11,10 +11,8 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install \
     pdo pdo_mysql mbstring zip gd
 
-# 3. Apache: ÉP CHỈ LOAD 1 MPM
-RUN a2dismod mpm_event \
-    && a2dismod mpm_worker \
-    && a2enmod mpm_prefork rewrite
+# 3. Apache: CHỈ BẬT REWRITE (Bỏ qua phần MPM vì base image đã lo rồi)
+RUN a2enmod rewrite
 
 # 4. DocumentRoot
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -38,5 +36,5 @@ COPY . .
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
-# 9. KHÔNG artisan cache khi build
+# 9. KHÔNG artisan cache khi build (để entrypoint lo hoặc chạy sau khi deploy)
 CMD ["apache2-foreground"]
