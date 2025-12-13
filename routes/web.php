@@ -136,13 +136,12 @@ Route::middleware('web')->group(function () {
         ->middleware('throttle:6,1');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Authenticated User Routes (Candidate + Employer + Admin)
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware('auth')->group(function () {
-
+            /*
+            |--------------------------------------------------------------------------
+            | Authenticated User Routes (Candidate + Employer + Admin)
+            |--------------------------------------------------------------------------
+            */
+            Route::middleware(['auth', 'verified'])->group(function () {
         // Notifications
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
