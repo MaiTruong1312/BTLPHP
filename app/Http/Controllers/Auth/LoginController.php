@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate.Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -15,6 +16,14 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        // Temporary diagnostic code
+        $driver = Hash::driver()->name();
+        if ($driver !== 'bcrypt') {
+            return back()->withErrors([
+                'email' => 'Hashing driver is not bcrypt. It is: ' . $driver,
+            ])->onlyInput('email');
+        }
+
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
