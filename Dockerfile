@@ -10,9 +10,6 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring zip gd
 
 # 3. Bật mod_rewrite cho Apache (để chạy .htaccess)
 RUN a2enmod rewrite
-# Fix lỗi More than one MPM loaded
-RUN a2dismod mpm_event mpm_worker || true \
-    && a2enmod mpm_prefork
 
 # 4. Thiết lập thư mục gốc cho Apache trỏ vào /public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
