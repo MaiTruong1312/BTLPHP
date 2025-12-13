@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         // cache
         Schema::create('cache', function (Blueprint $table) {
-            $table->string('cache_key')->primary();
+            $table->string('key')->primary();
             $table->mediumText('value');
             $table->integer('expiration');
         });
