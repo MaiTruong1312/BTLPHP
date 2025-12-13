@@ -11,8 +11,13 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install \
     pdo pdo_mysql mbstring zip gd
 
-# 3. Apache: CHỈ BẬT REWRITE (Bỏ qua phần MPM vì base image đã lo rồi)
-RUN a2enmod rewrite
+# 3. Apache: FIX LỖI AH00534 (Xóa thẳng tay file config gây xung đột)
+# Thay vì disable, ta xóa luôn symlink của mpm_event và mpm_worker
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.load \
+    && rm -f /etc/apache2/mods-enabled/mpm_event.conf \
+    && rm -f /etc/apache2/mods-enabled/mpm_worker.load \
+    && rm -f /etc/apache2/mods-enabled/mpm_worker.conf \
+    && a2enmod mpm_prefork rewrite
 
 # 4. DocumentRoot
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -36,5 +41,5 @@ COPY . .
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
-# 9. KHÔNG artisan cache khi build (để entrypoint lo hoặc chạy sau khi deploy)
+# 9. CMD
 CMD ["apache2-foreground"]
