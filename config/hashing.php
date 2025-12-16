@@ -4,7 +4,7 @@ return [
     'driver' => 'bcrypt',
     'bcrypt' => [
         'rounds' => env('BCRYPT_ROUNDS', 12),
-        'verify' => false,
+        'verify' => true,
     ],
     'argon' => [
         'memory' => 65536,
