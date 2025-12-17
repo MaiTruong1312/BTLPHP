@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 09, 2025 at 03:09 PM
+-- Generation Time: Dec 17, 2025 at 09:26 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,6 +32,22 @@ CREATE TABLE `cache` (
   `value` mediumtext NOT NULL,
   `expiration` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `cache`
+--
+
+INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
+('job-portal-cache-0ade7c2cf97f75d009975f4d720d1fa6c19f4897', 'i:3;', 1765481007),
+('job-portal-cache-0ade7c2cf97f75d009975f4d720d1fa6c19f4897:timer', 'i:1765481007;', 1765481007),
+('job-portal-cache-5c785c036466adea360111aa28563bfd556b5fba', 'i:1;', 1765904527),
+('job-portal-cache-5c785c036466adea360111aa28563bfd556b5fba:timer', 'i:1765904527;', 1765904527),
+('job-portal-cache-77de68daecd823babbb58edb1c8e14d7106e83bb', 'i:3;', 1765899782),
+('job-portal-cache-77de68daecd823babbb58edb1c8e14d7106e83bb:timer', 'i:1765899782;', 1765899782),
+('job-portal-cache-b1d5781111d84f7b3fe45a0852e59758cd7a87e5', 'i:2;', 1765481246),
+('job-portal-cache-b1d5781111d84f7b3fe45a0852e59758cd7a87e5:timer', 'i:1765481246;', 1765481246),
+('job-portal-cache-da4b9237bacccdf19c0760cab7aec4a8359010b0', 'i:1;', 1765899828),
+('job-portal-cache-da4b9237bacccdf19c0760cab7aec4a8359010b0:timer', 'i:1765899828;', 1765899828);
 
 -- --------------------------------------------------------
 
@@ -69,7 +85,8 @@ CREATE TABLE `candidate_education` (
 --
 
 INSERT INTO `candidate_education` (`id`, `candidate_profile_id`, `school_name`, `degree`, `field_of_study`, `start_date`, `end_date`, `description`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Banking Academy', '2027', 'Tôi đã phải trải qua nhiều thứ mà không ai biết :)))', '2023-11-25', '2025-11-25', NULL, '2025-11-24 17:45:15', '2025-11-24 17:45:15');
+(1, 1, 'Banking Academy', '2027', 'Tôi đã phải trải qua nhiều thứ mà không ai biết :)))', '2023-11-25', '2025-11-25', NULL, '2025-11-24 17:45:15', '2025-11-24 17:45:15'),
+(2, 5, 'Banking Academy', '2027', 'Tôi đã phải trải qua nhiều thứ mà không ai biết :)))', '2025-12-02', '2025-12-17', NULL, '2025-12-16 17:03:03', '2025-12-16 17:03:03');
 
 -- --------------------------------------------------------
 
@@ -95,7 +112,8 @@ CREATE TABLE `candidate_experiences` (
 --
 
 INSERT INTO `candidate_experiences` (`id`, `candidate_profile_id`, `company_name`, `position`, `start_date`, `end_date`, `is_current`, `description`, `created_at`, `updated_at`) VALUES
-(1, 1, 'banking academy', 'Back End', '2020-12-31', '2021-12-12', 0, NULL, '2025-11-23 11:21:14', '2025-11-24 17:40:07');
+(1, 1, 'banking academy', 'Back End', '2020-12-31', '2021-12-12', 0, NULL, '2025-11-23 11:21:14', '2025-11-24 17:40:07'),
+(3, 5, 'banking academy', 'sdada', '2025-12-12', '2025-12-12', 0, 'làm việc vui vẻ', '2025-12-16 17:02:36', '2025-12-16 17:02:36');
 
 -- --------------------------------------------------------
 
@@ -126,8 +144,7 @@ CREATE TABLE `candidate_profiles` (
 
 INSERT INTO `candidate_profiles` (`id`, `user_id`, `phone`, `date_of_birth`, `gender`, `address`, `summary`, `cv_path`, `is_searchable`, `years_of_experience`, `expected_salary_min`, `expected_salary_max`, `created_at`, `updated_at`) VALUES
 (1, 3, '0364335411', '2025-11-25', 'male', '12 chua boc', 'Experienced software developer with 5+ years in web development.', NULL, 0, 5, 3000000, 50000000, '2025-11-21 09:01:55', '2025-11-24 17:38:42'),
-(2, 5, '0364335411', '2025-11-25', NULL, '12 chua boc', NULL, NULL, 0, 5, 3000000, 50000000, '2025-11-29 23:35:09', '2025-11-29 23:35:46'),
-(3, 8, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, '2025-12-05 09:19:34', '2025-12-05 09:19:34');
+(5, 18, '0364335411', '2025-11-25', 'male', '12 chua boc', 'Yêu đời', 'cvs/mfTcIEIWq7zBMD2vIUOvXa6lvLd8PsY10ZTE1MAM.pdf', 0, 5, 3000000, 50000000, '2025-12-16 17:02:18', '2025-12-16 17:02:18');
 
 -- --------------------------------------------------------
 
@@ -148,7 +165,8 @@ INSERT INTO `candidate_skill` (`candidate_profile_id`, `skill_id`) VALUES
 (1, 1),
 (1, 3),
 (1, 11),
-(2, 3);
+(5, 1),
+(5, 3);
 
 -- --------------------------------------------------------
 
@@ -177,9 +195,10 @@ INSERT INTO `comments` (`id`, `job_id`, `user_id`, `parent_id`, `content`, `crea
 (4, 1, 2, 1, 'Oke', '2025-11-27 23:17:34', '2025-11-27 23:17:34'),
 (5, 1, 2, 1, 'hehe', '2025-11-27 23:21:04', '2025-11-27 23:21:04'),
 (6, 7, 4, NULL, 'Mại dô mại dô', '2025-11-28 09:14:03', '2025-11-28 09:14:03'),
-(7, 2, 5, 2, 'Thanks bạn', '2025-11-30 01:57:18', '2025-11-30 01:57:18'),
 (8, 8, 3, NULL, 'Hi', '2025-12-09 05:11:52', '2025-12-09 05:11:52'),
-(9, 8, 2, 8, 'Hi', '2025-12-09 06:14:45', '2025-12-09 06:14:45');
+(9, 8, 2, 8, 'Hi', '2025-12-09 06:14:45', '2025-12-09 06:14:45'),
+(10, 11, 18, NULL, 'Hi', '2025-12-16 17:03:56', '2025-12-16 17:03:56'),
+(11, 11, 18, 10, 'Hello', '2025-12-16 17:04:06', '2025-12-16 17:04:06');
 
 -- --------------------------------------------------------
 
@@ -217,7 +236,8 @@ CREATE TABLE `email_templates` (
 --
 
 INSERT INTO `email_templates` (`id`, `user_id`, `name`, `subject`, `body`, `type`, `created_at`, `updated_at`) VALUES
-(1, 2, 'Phỏng vấn 1', 'Lịch hẹn phỏng vấn', 'Bạn đã được chúng tôi ...', 'interview', '2025-11-30 01:13:19', '2025-11-30 01:13:19');
+(1, 2, 'Phỏng vấn 1', 'Lịch hẹn phỏng vấn', 'Bạn đã được chúng tôi ...', 'interview', '2025-11-30 01:13:19', '2025-11-30 01:13:19'),
+(2, 2, 'Từ chối 1', 'Cảm ơn bạn đã ứng tuyển', 'Lý do từ chối', 'rejected', '2025-12-16 16:40:16', '2025-12-16 16:40:16');
 
 -- --------------------------------------------------------
 
@@ -245,9 +265,8 @@ CREATE TABLE `employer_profiles` (
 --
 
 INSERT INTO `employer_profiles` (`id`, `user_id`, `company_name`, `company_slug`, `logo`, `website`, `phone`, `address`, `company_size`, `about`, `created_at`, `updated_at`) VALUES
-(1, 2, 'Tech Solutions Inc.', 'tech-solutions-inc', NULL, NULL, NULL, NULL, '51-200', 'A leading technology company providing innovative solutions.', '2025-11-21 09:01:55', '2025-11-21 09:01:55'),
+(1, 2, 'Tech Solutions Inc.', 'tech-solutions-inc', NULL, 'https://btlphp-production-7005.up.railway.app/', '0364335411', '12 chua boc', '51-200', 'A leading technology company providing innovative solutions.', '2025-11-21 09:01:55', '2025-12-16 16:03:46'),
 (2, 4, 'banking academy', 'banking-academy', NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-28 09:10:15', '2025-11-28 09:10:15'),
-(3, 6, 'BanKing Lion', 'banking-lion', NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-03 02:43:43', '2025-12-03 02:43:43'),
 (4, 7, 'Job Portal', 'job-portal', NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-05 04:56:10', '2025-12-05 04:56:10');
 
 -- --------------------------------------------------------
@@ -264,6 +283,56 @@ CREATE TABLE `failed_jobs` (
   `payload` longtext NOT NULL,
   `exception` longtext NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `interviews`
+--
+
+CREATE TABLE `interviews` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `job_application_id` bigint(20) UNSIGNED NOT NULL,
+  `interviewer_id` bigint(20) UNSIGNED NOT NULL,
+  `scheduled_at` datetime NOT NULL,
+  `duration_minutes` int(11) NOT NULL DEFAULT 60,
+  `type` enum('online','offline') NOT NULL DEFAULT 'online',
+  `location` varchar(255) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `cancellation_reason` text DEFAULT NULL,
+  `status` enum('scheduled','completed','cancelled') NOT NULL DEFAULT 'scheduled',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `interviews`
+--
+
+INSERT INTO `interviews` (`id`, `job_application_id`, `interviewer_id`, `scheduled_at`, `duration_minutes`, `type`, `location`, `notes`, `cancellation_reason`, `status`, `created_at`, `updated_at`) VALUES
+(1, 13, 2, '2025-12-20 14:24:00', 60, 'offline', 'Phong 506 - Tầng 5 - 72 nguyễn trãi', 'Mang theo cv và lap', NULL, 'scheduled', '2025-12-17 07:25:12', '2025-12-17 07:25:12'),
+(2, 12, 2, '2025-12-20 14:31:00', 60, 'offline', 'Phong 506 - Tầng 5 - 72 nguyễn trãi', NULL, NULL, 'scheduled', '2025-12-17 07:32:03', '2025-12-17 07:32:03'),
+(3, 10, 2, '2025-12-20 14:34:00', 60, 'offline', 'Phong 506 - Tầng 5 - 72 nguyễn trãi', NULL, NULL, 'scheduled', '2025-12-17 07:34:33', '2025-12-17 07:34:33'),
+(4, 8, 2, '2025-12-20 14:35:00', 60, 'online', 'Phong 506 - Tầng 5 - 72 nguyễn trãi', NULL, NULL, 'scheduled', '2025-12-17 07:35:25', '2025-12-17 07:35:25'),
+(5, 5, 2, '2025-12-19 14:35:00', 60, 'online', 'Phong 506 - Tầng 5 - 72 nguyễn trãi', NULL, NULL, 'scheduled', '2025-12-17 07:35:42', '2025-12-17 07:35:42');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `interview_evaluations`
+--
+
+CREATE TABLE `interview_evaluations` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `interview_id` bigint(20) UNSIGNED NOT NULL,
+  `evaluator_id` bigint(20) UNSIGNED NOT NULL,
+  `rating` tinyint(3) UNSIGNED NOT NULL,
+  `strengths` text DEFAULT NULL,
+  `weaknesses` text DEFAULT NULL,
+  `overall_comment` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -303,15 +372,16 @@ CREATE TABLE `jobs` (
 --
 
 INSERT INTO `jobs` (`id`, `user_id`, `employer_profile_id`, `category_id`, `location_id`, `title`, `slug`, `short_description`, `description`, `requirements`, `salary_min`, `salary_max`, `currency`, `salary_type`, `job_type`, `experience_level`, `is_remote`, `vacancies`, `deadline`, `status`, `views_count`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 6, 2, 'Senior PHP Developer', 'senior-php-developer-1763740915-0', 'We are looking for an experienced professional to join our team.', 'This is a detailed job description. We are seeking a talented individual who can contribute to our team and help us achieve our goals. The ideal candidate should have relevant experience and a passion for excellence.', 'Bachelor degree in related field. Minimum 2 years of experience. Strong communication skills.', 10000000, 20000000, 'VND', 'month', 'full_time', 'senior', 1, 2, NULL, 'published', 49, '2025-11-21 09:01:55', '2025-12-01 07:48:06'),
-(2, 2, 1, 2, 4, 'Frontend Developer (React)', 'frontend-developer-react-1763740915-1', 'We are looking for an experienced professional to join our team.', 'This is a detailed job description. We are seeking a talented individual who can contribute to our team and help us achieve our goals. The ideal candidate should have relevant experience and a passion for excellence.', 'Bachelor degree in related field. Minimum 2 years of experience. Strong communication skills.', 12000000, 23000000, 'VND', 'month', 'remote', 'senior', 1, 1, NULL, 'published', 43, '2025-11-21 09:01:55', '2025-12-01 23:36:29'),
+(1, 2, 1, 6, 2, 'Senior PHP Developer', 'senior-php-developer-1763740915-0', 'We are looking for an experienced professional to join our team.', 'This is a detailed job description. We are seeking a talented individual who can contribute to our team and help us achieve our goals. The ideal candidate should have relevant experience and a passion for excellence.', 'Bachelor degree in related field. Minimum 2 years of experience. Strong communication skills.', 10000000, 20000000, 'VND', 'month', 'full_time', 'senior', 1, 2, NULL, 'published', 50, '2025-11-21 09:01:55', '2025-12-16 16:37:58'),
+(2, 2, 1, 2, 4, 'Frontend Developer (React)', 'frontend-developer-react-1763740915-1', 'We are looking for an experienced professional to join our team.', 'This is a detailed job description. We are seeking a talented individual who can contribute to our team and help us achieve our goals. The ideal candidate should have relevant experience and a passion for excellence.', 'Bachelor degree in related field. Minimum 2 years of experience. Strong communication skills.', 12000000, 23000000, 'VND', 'month', 'remote', 'senior', 1, 1, NULL, 'published', 44, '2025-11-21 09:01:55', '2025-12-13 00:24:17'),
 (3, 2, 1, 6, 1, 'Full Stack Developer', 'full-stack-developer-1763740915-2', 'We are looking for an experienced professional to join our team.', 'This is a detailed job description. We are seeking a talented individual who can contribute to our team and help us achieve our goals. The ideal candidate should have relevant experience and a passion for excellence.', 'Bachelor degree in related field. Minimum 2 years of experience. Strong communication skills.', 14000000, 26000000, 'VND', 'month', 'full_time', 'senior', 0, 3, NULL, 'published', 21, '2025-11-21 09:01:55', '2025-12-07 08:54:37'),
 (4, 2, 1, 2, 1, 'Marketing Manager', 'marketing-manager-1763740915-3', 'We are looking for an experienced professional to join our team.', 'This is a detailed job description. We are seeking a talented individual who can contribute to our team and help us achieve our goals. The ideal candidate should have relevant experience and a passion for excellence.', 'Bachelor degree in related field. Minimum 2 years of experience. Strong communication skills.', 16000000, 29000000, 'VND', 'month', 'full_time', 'junior', 0, 3, NULL, 'published', 8, '2025-11-21 09:01:55', '2025-12-01 07:49:05'),
-(5, 2, 1, 1, 3, 'Sales Executive', 'sales-executive-1763740915-4', 'We are looking for an experienced professional to join our team.', 'This is a detailed job description. We are seeking a talented individual who can contribute to our team and help us achieve our goals. The ideal candidate should have relevant experience and a passion for excellence.', 'Bachelor degree in related field. Minimum 2 years of experience. Strong communication skills.', 18000000, 32000000, 'VND', 'month', 'remote', 'senior', 1, 2, NULL, 'published', 4, '2025-11-21 09:01:55', '2025-11-30 02:12:56'),
+(5, 2, 1, 1, 3, 'Sales Executive', 'sales-executive-1763740915-4', 'We are looking for an experienced professional to join our team.', 'This is a detailed job description. We are seeking a talented individual who can contribute to our team and help us achieve our goals. The ideal candidate should have relevant experience and a passion for excellence.', 'Bachelor degree in related field. Minimum 2 years of experience. Strong communication skills.', 18000000, 32000000, 'VND', 'month', 'remote', 'senior', 1, 2, NULL, 'published', 5, '2025-11-21 09:01:55', '2025-12-16 16:22:18'),
 (6, 2, 1, 1, 1, 'Lập trình PHP', 'lap-trinh-php-1764039828', 'Thành thạo PHP', 'a', 'a', 30000000, 50000000, 'VND', 'month', 'full_time', NULL, 0, 1, '2025-11-27', 'published', 8, '2025-11-24 20:03:48', '2025-12-03 02:04:27'),
 (7, 4, 2, 1, 2, 'Lập trình Java', 'lap-trinh-java-1764346429', 'Sử dụng thành thạo Java', 'Code được các dự án java lớn cùng với team hoàn thiện các chương trình', NULL, 5000000, 15000000, 'VND', 'month', 'internship', 'mid', 0, 2, '2025-12-06', 'published', 14, '2025-11-28 09:13:49', '2025-12-01 08:59:30'),
 (8, 2, 1, 1, 2, 'Tuyển cộng tác viên React', 'tuyen-cong-tac-vien-react-1764752855', 'Công việc mà chúng tôi đang cần', 'Chạy deadline vui vẻ', 'Thành thạo các ngôn ngữ liên quan', 10000000, 30000000, 'VND', 'month', 'remote', 'mid', 0, 2, '2025-12-31', 'published', 9, '2025-12-03 02:07:35', '2025-12-09 06:14:46'),
-(11, 2, 1, 1, 2, 'Tuyển Intern PHP', 'tuyen-intern-php-1765284111', 'Công việc mà chúng tôi đang cần', 'Giới thiệu công việc:..............................', 'Yêu cầu về công việc:,....................................', 10000000, 30000000, 'VND', 'month', 'internship', 'junior', 0, 4, '2025-12-31', 'published', 0, '2025-12-09 05:41:51', '2025-12-09 05:45:53');
+(11, 2, 1, 1, 2, 'Tuyển Intern PHP', 'tuyen-intern-php-1765284111', 'Công việc mà chúng tôi đang cần', 'Giới thiệu công việc:..............................', 'Yêu cầu về công việc:,....................................', 10000000, 30000000, 'VND', 'month', 'internship', 'junior', 0, 4, '2025-12-31', 'published', 13, '2025-12-09 05:41:51', '2025-12-16 17:04:21'),
+(12, 2, 1, 1, 2, 'Tuyển cộng tác viên', 'tuyen-cong-tac-vien-1765904839', 'Công việc mà chúng tôi đang cần', 'hi', 'hi', 10000000, 30000000, 'VND', 'month', 'part_time', 'junior', 1, 5, '2025-12-31', 'published', 2, '2025-12-16 17:07:19', '2025-12-16 17:09:04');
 
 -- --------------------------------------------------------
 
@@ -342,12 +412,11 @@ INSERT INTO `job_applications` (`id`, `job_id`, `user_id`, `candidate_profile_id
 (3, 2, 3, 1, 'Tôi muốn ứng tuyển', 'cvs/lTzUobTngx8jU1gycTjKzLUdlbHJK0WdZK3lsGnE.pdf', 'rejected', NULL, NULL, '2025-11-30 03:36:08', NULL, '2025-11-30 03:36:08'),
 (4, 7, 3, 1, 'Tôi muốn ứng tuyển', 'cvs/mHo0O5arNTZflmZLm9HbCmDDEiGD6NHdiEW7C9cm.pdf', 'applied', NULL, NULL, '2025-11-30 05:32:56', NULL, '2025-11-30 05:32:56'),
 (5, 5, 3, 1, 'Tôi muốn ứng tuyển', 'cvs/L9lje3q1AML1tG8U7E0jdHigojF6MTHxvgsgmrtC.pdf', 'interview', NULL, NULL, '2025-11-30 05:35:51', NULL, '2025-11-30 05:35:51'),
-(6, 7, 5, 2, 'Heheeeee', 'cvs/zCTHseMKBK4tZQFnW0actm1gFxQsZOWjIC78Uh23.pdf', 'applied', NULL, NULL, '2025-11-30 06:36:30', NULL, '2025-11-30 06:36:30'),
-(7, 3, 5, 2, 'Tôi muốn ứng tuyển', 'cvs/0T40ANjzNULfq7AMnK9drkzCIfbUxZeCglMnSqgv.pdf', 'interview', NULL, 'Có yếu tố tốt', '2025-11-30 06:38:32', NULL, '2025-11-30 06:38:32'),
 (8, 1, 3, 1, 'Tôi muốn ứng tuyển', 'cvs/ZqD2UkoEwY6QBwqZTqS3lYuEUYVzB6ygnd5BU1wG.pdf', 'interview', NULL, NULL, '2025-11-30 08:39:31', NULL, '2025-11-30 08:39:31'),
-(9, 2, 5, 2, 'Tôi muốn ứng tuyển', NULL, 'interview', NULL, NULL, '2025-11-30 08:57:36', NULL, '2025-11-30 08:57:36'),
 (10, 4, 3, 1, 'Hú Hú', 'cvs/dGnY4aAJo17dzG6V9ZJC9jY3FXtYnp4U130N8Xey.pdf', 'interview', NULL, NULL, '2025-11-30 09:13:12', NULL, '2025-11-30 09:13:12'),
-(11, 8, 3, 1, 'Tôi muốn ứng tuyển', 'cvs/oy0j1uNRbsad3i8duTs1jAjpjKDsfCwPUwnjPXxQ.pdf', 'applied', NULL, NULL, '2025-12-09 12:12:17', NULL, '2025-12-09 12:12:17');
+(11, 8, 3, 1, 'Tôi muốn ứng tuyển', 'cvs/oy0j1uNRbsad3i8duTs1jAjpjKDsfCwPUwnjPXxQ.pdf', 'interview', NULL, NULL, '2025-12-09 12:12:17', NULL, '2025-12-09 12:12:17'),
+(12, 11, 16, NULL, 'Tôi muốn ứng tuyển', 'cvs/iljHT1SMpcgr3KG9OD03LMDf3Uc2UuVufdc5saBV.pdf', 'interview', NULL, NULL, '2025-12-16 16:16:54', NULL, '2025-12-16 16:16:54'),
+(13, 11, 18, 5, 'Tôi muốn ứng tuyển', 'cvs/xgGi5s5i1RmS9xHGvCKEfsdSsXdvychXGuLwFzDU.pdf', 'interview', NULL, 'Tốt nên tuyển', '2025-12-16 17:03:50', NULL, '2025-12-16 17:03:50');
 
 -- --------------------------------------------------------
 
@@ -458,7 +527,10 @@ INSERT INTO `job_skill` (`job_id`, `skill_id`) VALUES
 (8, 4),
 (11, 1),
 (11, 2),
-(11, 6);
+(11, 6),
+(12, 3),
+(12, 7),
+(12, 8);
 
 -- --------------------------------------------------------
 
@@ -506,7 +578,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (27, '2025_12_02_113952_add_is_searchable_to_candidate_profiles_table', 11),
 (28, '2025_12_02_114136_create_plans_table', 12),
 (29, '2025_12_02_114136_create_subscriptions_table', 13),
-(30, '2025_12_02_114137_create_subscriptions_table', 14);
+(30, '2025_12_02_114137_create_subscriptions_table', 14),
+(31, '2025_12_17_000000_create_interviews_table', 15),
+(32, '2025_12_18_000000_add_cancellation_reason_to_interviews_table', 16),
+(33, '2025_12_19_000000_create_interview_evaluations_table', 17);
 
 -- --------------------------------------------------------
 
@@ -535,7 +610,13 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('6266496d-b86c-42a1-a7c5-8d78f48c5c93', 'App\\Notifications\\ApplicationStatusUpdated', 'App\\Models\\User', 3, '{\"job_id\":1,\"job_title\":\"Senior PHP Developer\",\"status\":\"interview\",\"message\":\"H\\u1ed3 s\\u01a1 c\\u1ee7a b\\u1ea1n cho v\\u1ecb tr\\u00ed <strong>Senior PHP Developer<\\/strong> \\u0111\\u00e3 \\u0111\\u01b0\\u1ee3c c\\u1eadp nh\\u1eadt tr\\u1ea1ng th\\u00e1i th\\u00e0nh: <strong>interview<\\/strong>.\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/jobs\\/senior-php-developer-1763740915-0\"}', '2025-11-30 02:11:24', '2025-11-30 02:10:48', '2025-11-30 02:11:24'),
 ('70947631-92e9-41cf-b743-1687b90dbafa', 'App\\Notifications\\NewApplicantNotification', 'App\\Models\\User', 2, '{\"applicant_id\":3,\"applicant_name\":\"Mai Truong\",\"job_id\":8,\"job_title\":\"Tuy\\u1ec3n c\\u1ed9ng t\\u00e1c vi\\u00ean React\",\"message\":\"<strong>Mai Truong<\\/strong> \\u0111\\u00e3 \\u1ee9ng tuy\\u1ec3n v\\u00e0o v\\u1ecb tr\\u00ed <strong>Tuy\\u1ec3n c\\u1ed9ng t\\u00e1c vi\\u00ean React<\\/strong>.\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/employer\\/applications\"}', '2025-12-09 06:14:15', '2025-12-09 05:12:17', '2025-12-09 06:14:15'),
 ('98b227e5-481f-405a-90bd-a0b20a254244', 'App\\Notifications\\ApplicationStatusUpdated', 'App\\Models\\User', 5, '{\"job_id\":2,\"job_title\":\"Frontend Developer (React)\",\"status\":\"interview\",\"message\":\"H\\u1ed3 s\\u01a1 c\\u1ee7a b\\u1ea1n cho v\\u1ecb tr\\u00ed <strong>Frontend Developer (React)<\\/strong> \\u0111\\u00e3 \\u0111\\u01b0\\u1ee3c c\\u1eadp nh\\u1eadt tr\\u1ea1ng th\\u00e1i th\\u00e0nh: <strong>interview<\\/strong>.\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/jobs\\/frontend-developer-react-1763740915-1\"}', NULL, '2025-12-01 23:31:11', '2025-12-01 23:31:11'),
-('cb9168f2-fca5-477b-97ba-af50d0a9917c', 'App\\Notifications\\NewApplicantNotification', 'App\\Models\\User', 2, '{\"applicant_id\":3,\"applicant_name\":\"Mai Truong\",\"job_id\":1,\"job_title\":\"Senior PHP Developer\",\"message\":\"<strong>Mai Truong<\\/strong> \\u0111\\u00e3 \\u1ee9ng tuy\\u1ec3n v\\u00e0o v\\u1ecb tr\\u00ed <strong>Senior PHP Developer<\\/strong>.\",\"url\":\"http:\\/\\/localhost:8000\\/jobs\\/1\\/applications\"}', '2025-11-28 09:01:35', '2025-11-28 07:59:19', '2025-11-28 09:01:35');
+('994c1610-4452-4f89-80fb-aff3bc7ea725', 'App\\Notifications\\ApplicationStatusUpdated', 'App\\Models\\User', 18, '{\"job_id\":11,\"job_title\":\"Tuy\\u1ec3n Intern PHP\",\"status\":\"interview\",\"message\":\"H\\u1ed3 s\\u01a1 c\\u1ee7a b\\u1ea1n cho v\\u1ecb tr\\u00ed <strong>Tuy\\u1ec3n Intern PHP<\\/strong> \\u0111\\u00e3 \\u0111\\u01b0\\u1ee3c c\\u1eadp nh\\u1eadt tr\\u1ea1ng th\\u00e1i th\\u00e0nh: <strong>interview<\\/strong>.\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/jobs\\/tuyen-intern-php-1765284111\"}', NULL, '2025-12-16 17:05:09', '2025-12-16 17:05:09'),
+('9c7d31b8-6541-4c85-8675-21275fddeb2c', 'App\\Notifications\\ApplicationStatusUpdated', 'App\\Models\\User', 3, '{\"job_id\":8,\"job_title\":\"Tuy\\u1ec3n c\\u1ed9ng t\\u00e1c vi\\u00ean React\",\"status\":\"interview\",\"message\":\"H\\u1ed3 s\\u01a1 c\\u1ee7a b\\u1ea1n cho v\\u1ecb tr\\u00ed <strong>Tuy\\u1ec3n c\\u1ed9ng t\\u00e1c vi\\u00ean React<\\/strong> \\u0111\\u00e3 \\u0111\\u01b0\\u1ee3c c\\u1eadp nh\\u1eadt tr\\u1ea1ng th\\u00e1i th\\u00e0nh: <strong>interview<\\/strong>.\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/jobs\\/tuyen-cong-tac-vien-react-1764752855\"}', NULL, '2025-12-17 06:53:26', '2025-12-17 06:53:26'),
+('c29f905c-88cb-45f3-847a-fac18d3d2382', 'App\\Notifications\\ApplicationStatusUpdated', 'App\\Models\\User', 16, '{\"job_id\":11,\"job_title\":\"Tuy\\u1ec3n Intern PHP\",\"status\":\"reviewing\",\"message\":\"H\\u1ed3 s\\u01a1 c\\u1ee7a b\\u1ea1n cho v\\u1ecb tr\\u00ed <strong>Tuy\\u1ec3n Intern PHP<\\/strong> \\u0111\\u00e3 \\u0111\\u01b0\\u1ee3c c\\u1eadp nh\\u1eadt tr\\u1ea1ng th\\u00e1i th\\u00e0nh: <strong>reviewing<\\/strong>.\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/jobs\\/tuyen-intern-php-1765284111\"}', NULL, '2025-12-17 06:51:04', '2025-12-17 06:51:04'),
+('cb40eb28-897c-4609-8725-a1df6dfd3b08', 'App\\Notifications\\NewApplicantNotification', 'App\\Models\\User', 2, '{\"applicant_id\":16,\"applicant_name\":\"Mai V\\u0103n Tr\\u01b0\\u1eddng\",\"job_id\":11,\"job_title\":\"Tuy\\u1ec3n Intern PHP\",\"message\":\"<strong>Mai V\\u0103n Tr\\u01b0\\u1eddng<\\/strong> \\u0111\\u00e3 \\u1ee9ng tuy\\u1ec3n v\\u00e0o v\\u1ecb tr\\u00ed <strong>Tuy\\u1ec3n Intern PHP<\\/strong>.\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/employer\\/applications\"}', NULL, '2025-12-16 16:16:54', '2025-12-16 16:16:54'),
+('cb9168f2-fca5-477b-97ba-af50d0a9917c', 'App\\Notifications\\NewApplicantNotification', 'App\\Models\\User', 2, '{\"applicant_id\":3,\"applicant_name\":\"Mai Truong\",\"job_id\":1,\"job_title\":\"Senior PHP Developer\",\"message\":\"<strong>Mai Truong<\\/strong> \\u0111\\u00e3 \\u1ee9ng tuy\\u1ec3n v\\u00e0o v\\u1ecb tr\\u00ed <strong>Senior PHP Developer<\\/strong>.\",\"url\":\"http:\\/\\/localhost:8000\\/jobs\\/1\\/applications\"}', '2025-11-28 09:01:35', '2025-11-28 07:59:19', '2025-11-28 09:01:35'),
+('cc9a9711-dd21-4d5e-a2f0-53b4390b96e5', 'App\\Notifications\\ApplicationStatusUpdated', 'App\\Models\\User', 16, '{\"job_id\":11,\"job_title\":\"Tuy\\u1ec3n Intern PHP\",\"status\":\"interview\",\"message\":\"H\\u1ed3 s\\u01a1 c\\u1ee7a b\\u1ea1n cho v\\u1ecb tr\\u00ed <strong>Tuy\\u1ec3n Intern PHP<\\/strong> \\u0111\\u00e3 \\u0111\\u01b0\\u1ee3c c\\u1eadp nh\\u1eadt tr\\u1ea1ng th\\u00e1i th\\u00e0nh: <strong>interview<\\/strong>.\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/jobs\\/tuyen-intern-php-1765284111\"}', NULL, '2025-12-17 06:51:02', '2025-12-17 06:51:02'),
+('db30fbf3-2737-4962-ace0-56498422a4c5', 'App\\Notifications\\NewApplicantNotification', 'App\\Models\\User', 2, '{\"applicant_id\":18,\"applicant_name\":\"Mai V\\u0103n Tr\\u01b0\\u1eddng\",\"job_id\":11,\"job_title\":\"Tuy\\u1ec3n Intern PHP\",\"message\":\"<strong>Mai V\\u0103n Tr\\u01b0\\u1eddng<\\/strong> \\u0111\\u00e3 \\u1ee9ng tuy\\u1ec3n v\\u00e0o v\\u1ecb tr\\u00ed <strong>Tuy\\u1ec3n Intern PHP<\\/strong>.\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/employer\\/applications\"}', NULL, '2025-12-16 17:03:50', '2025-12-16 17:03:50');
 
 -- --------------------------------------------------------
 
@@ -641,6 +722,13 @@ CREATE TABLE `queue_jobs` (
   `created_at` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `queue_jobs`
+--
+
+INSERT INTO `queue_jobs` (`id`, `queue`, `payload`, `attempts`, `reserved_at`, `available_at`, `created_at`) VALUES
+(1, 'default', '{\"uuid\":\"fbc67660-f9a1-44b4-9ba5-a578560c5549\",\"displayName\":\"App\\\\Notifications\\\\WelcomeNotification\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\",\"command\":\"O:48:\\\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\\\":3:{s:11:\\\"notifiables\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";a:1:{i:0;i:12;}s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:12:\\\"notification\\\";O:37:\\\"App\\\\Notifications\\\\WelcomeNotification\\\":1:{s:2:\\\"id\\\";s:36:\\\"c1461426-f025-48a9-ac52-eb6318519f19\\\";}s:8:\\\"channels\\\";a:1:{i:0;s:4:\\\"mail\\\";}}\"},\"createdAt\":1765481615,\"delay\":null}', 0, NULL, 1765481615, 1765481615);
+
 -- --------------------------------------------------------
 
 --
@@ -663,7 +751,8 @@ INSERT INTO `saved_jobs` (`user_id`, `job_id`, `saved_at`, `updated_at`) VALUES
 (3, 3, '2025-11-23 09:50:24', '2025-11-23 09:50:24'),
 (3, 4, '2025-11-25 23:10:04', '2025-11-25 23:10:04'),
 (3, 8, '2025-12-09 05:12:20', '2025-12-09 05:12:20'),
-(5, 3, '2025-11-29 23:38:17', '2025-11-29 23:38:17');
+(16, 11, '2025-12-16 16:15:40', '2025-12-16 16:15:40'),
+(18, 11, '2025-12-16 17:03:28', '2025-12-16 17:03:28');
 
 -- --------------------------------------------------------
 
@@ -735,7 +824,6 @@ INSERT INTO `subscriptions` (`id`, `employer_profile_id`, `plan_id`, `starts_at`
 (1, 1, 1, '2025-12-02 22:21:43', NULL, '2025-12-02 22:21:43', '2025-12-02 22:21:43'),
 (2, 1, 3, '2025-12-02 22:22:33', '2026-01-02 22:22:33', '2025-12-02 22:22:33', '2025-12-02 22:22:33'),
 (3, 1, 2, '2025-12-02 22:22:44', '2026-01-02 22:22:44', '2025-12-02 22:22:44', '2025-12-02 22:22:44'),
-(4, 3, 1, '2025-12-03 02:48:38', NULL, '2025-12-03 02:48:38', '2025-12-03 02:48:38'),
 (5, 4, 1, '2025-12-05 04:56:48', NULL, '2025-12-05 04:56:46', '2025-12-05 04:56:48');
 
 -- --------------------------------------------------------
@@ -762,14 +850,14 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `avatar`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Admin User', 'admin@example.com', NULL, '$2y$12$9CJxRb9rOYyZZnq/9U5BgeY3uXSRcqaDc8yvxaZ76tSxRdNWaOW8a', 'admin', NULL, NULL, '2025-11-21 09:01:55', '2025-11-21 09:01:55'),
-(2, 'John Employer', 'employer@example.com', NULL, '$2y$12$C3J.FBYZSNla/t96a6UGKuEKQyhwjhu/mhkqTP7HPzn7uADX9XF3e', 'employer', 'avatars/692e8be107fbe.jpg', NULL, '2025-11-21 09:01:55', '2025-12-01 23:49:05'),
-(3, 'Mai Truong', 'candidate@example.com', NULL, '$2y$12$AlN.ThJBYeGITAKy0gKfc.WCTRQEgUVhHahXvMNFxagjVd5lyEX.a', 'candidate', 'avatars/6924fbcdaf955.jpg', NULL, '2025-11-21 09:01:55', '2025-11-24 17:43:57'),
-(4, 'Sơn Quý', 'progamevip2310@gmail.com', NULL, '$2y$12$hsEQG2YnwlEIGFiYw7nDve6KVC9RXx9Lzv511wXbVAB5dVtCdw2jO', 'employer', 'avatars/6929c9ab356fe.jpg', NULL, '2025-11-28 09:10:15', '2025-11-28 09:11:24'),
-(5, 'Mai Văn Trường', 'goodjobem2@gmail.com', NULL, '$2y$12$QNdZHchrSo20WP5T9/K7QO3accofz2lEbvKi/gL2FLF6aLXyiPsya', 'candidate', NULL, NULL, '2025-11-29 23:35:09', '2025-11-29 23:35:09'),
-(6, 'Mai Văn Trường', 'maitruong1312205@gmail.com', NULL, '$2y$12$sT52joyvi1L37JT3OHJnlu2OwUa8nNrIm.KIDw9xAqn7229oph5ES', 'employer', NULL, NULL, '2025-12-03 02:43:43', '2025-12-03 02:43:43'),
+(1, 'Admin User', 'admin@example.com', '2025-12-01 23:49:05', '$2y$12$9CJxRb9rOYyZZnq/9U5BgeY3uXSRcqaDc8yvxaZ76tSxRdNWaOW8a', 'admin', NULL, NULL, '2025-11-21 09:01:55', '2025-11-21 09:01:55'),
+(2, 'John Employer', 'employer@example.com', '2025-12-16 09:01:55', '$2y$12$C3J.FBYZSNla/t96a6UGKuEKQyhwjhu/mhkqTP7HPzn7uADX9XF3e', 'employer', 'avatars/694187dc5bf6d.jpg', NULL, '2025-11-21 09:01:55', '2025-12-16 16:25:00'),
+(3, 'Mai Truong', 'candidate@example.com', '2025-12-01 23:49:05', '$2y$12$AlN.ThJBYeGITAKy0gKfc.WCTRQEgUVhHahXvMNFxagjVd5lyEX.a', 'candidate', 'avatars/6924fbcdaf955.jpg', NULL, '2025-11-21 09:01:55', '2025-11-24 17:43:57'),
+(4, 'Sơn Quý', 'progamevip2310@gmail.com', '2025-12-01 23:49:05', '$2y$12$hsEQG2YnwlEIGFiYw7nDve6KVC9RXx9Lzv511wXbVAB5dVtCdw2jO', 'employer', 'avatars/6929c9ab356fe.jpg', NULL, '2025-11-28 09:10:15', '2025-11-28 09:11:24'),
 (7, 'Mai Văn Trường', 'a@gmail.com', NULL, '$2y$12$pHhbwWed/f9qLD5/t0y4Ee8hr6IuonZd0/P32pzhFDWuae/3tEkKi', 'employer', NULL, NULL, '2025-12-05 04:56:10', '2025-12-05 04:56:10'),
-(8, 'Sơn Quý', '26a4041674@hvnh.edu.vn', NULL, '$2y$12$M3V6w.XnTJ69.F6zommLselgjucBH7MCUu9m7d6T562mtC5rIPG1G', 'candidate', NULL, NULL, '2025-12-05 09:19:34', '2025-12-05 09:19:34');
+(9, 'Mai Truong', '26a4041674@hvnh.edu.vn', NULL, '$2y$12$D.RPr4GFaaNu1iblJPb76Oa0CkZlYR.KrDvYrSYCOfOcDlKt0xcAq', 'candidate', NULL, NULL, '2025-12-11 19:20:01', '2025-12-11 19:20:01'),
+(16, 'Mai Văn Trường', 'maitruong1312205@gmail.com', '2025-12-16 15:44:28', '$2y$12$s6yFm2E937W9LlLrEDdvOu2ZLKjLP5DKcZPfC1R3u90If4fjzS4WO', 'candidate', NULL, NULL, '2025-12-16 15:44:00', '2025-12-16 15:44:28'),
+(18, 'Mai Văn Trường', 'goodjobem2@gmail.com', '2025-12-16 17:01:07', '$2y$12$sMiVmdzEBnmeueAIcSMOtu33b3WeXzJkW06Xu/KdbqwA94jDQLbeq', 'candidate', 'avatars/694190728f04e.jpg', NULL, '2025-12-16 17:00:47', '2025-12-16 17:01:38');
 
 --
 -- Indexes for dumped tables
@@ -854,6 +942,22 @@ ALTER TABLE `employer_profiles`
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
+-- Indexes for table `interviews`
+--
+ALTER TABLE `interviews`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `interviews_job_application_id_foreign` (`job_application_id`),
+  ADD KEY `interviews_interviewer_id_foreign` (`interviewer_id`);
+
+--
+-- Indexes for table `interview_evaluations`
+--
+ALTER TABLE `interview_evaluations`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `interview_evaluations_interview_id_unique` (`interview_id`),
+  ADD KEY `interview_evaluations_evaluator_id_foreign` (`evaluator_id`);
 
 --
 -- Indexes for table `jobs`
@@ -999,25 +1103,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `candidate_education`
 --
 ALTER TABLE `candidate_education`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `candidate_experiences`
 --
 ALTER TABLE `candidate_experiences`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `candidate_profiles`
 --
 ALTER TABLE `candidate_profiles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `comment_likes`
@@ -1029,13 +1133,13 @@ ALTER TABLE `comment_likes`
 -- AUTO_INCREMENT for table `email_templates`
 --
 ALTER TABLE `email_templates`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `employer_profiles`
 --
 ALTER TABLE `employer_profiles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -1044,16 +1148,28 @@ ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `interviews`
+--
+ALTER TABLE `interviews`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `interview_evaluations`
+--
+ALTER TABLE `interview_evaluations`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `job_applications`
 --
 ALTER TABLE `job_applications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `job_categories`
@@ -1071,7 +1187,7 @@ ALTER TABLE `job_locations`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -1095,7 +1211,7 @@ ALTER TABLE `posts`
 -- AUTO_INCREMENT for table `queue_jobs`
 --
 ALTER TABLE `queue_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `skills`
@@ -1113,7 +1229,7 @@ ALTER TABLE `subscriptions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Constraints for dumped tables
@@ -1170,6 +1286,20 @@ ALTER TABLE `email_templates`
 --
 ALTER TABLE `employer_profiles`
   ADD CONSTRAINT `employer_profiles_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `interviews`
+--
+ALTER TABLE `interviews`
+  ADD CONSTRAINT `interviews_interviewer_id_foreign` FOREIGN KEY (`interviewer_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `interviews_job_application_id_foreign` FOREIGN KEY (`job_application_id`) REFERENCES `job_applications` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `interview_evaluations`
+--
+ALTER TABLE `interview_evaluations`
+  ADD CONSTRAINT `interview_evaluations_evaluator_id_foreign` FOREIGN KEY (`evaluator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `interview_evaluations_interview_id_foreign` FOREIGN KEY (`interview_id`) REFERENCES `interviews` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `jobs`

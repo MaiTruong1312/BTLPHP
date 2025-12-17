@@ -29,6 +29,12 @@
                     ✏ Update Profile
                 </a>
 
+                {{-- New Interview Button --}}
+                <a href="{{ route('candidate.interviews.index') }}"
+                   class="flex items-center justify-center bg-indigo-600 text-white py-3 rounded-xl font-semibold shadow hover:bg-indigo-700 transition transform hover:-translate-y-1">
+                    📅 My Interviews
+                </a>
+
                 @if(auth()->user()->candidateProfile)
                     <a href="{{ route('profile.public.show', auth()->user()->id) }}"
                        target="_blank"

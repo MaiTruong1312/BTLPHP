@@ -8,6 +8,7 @@
     x-data="{ 
         isNotesModalOpen: false,
         isCoverLetterModalOpen: false, 
+        isInterviewModalOpen: false,
         currentApplicationId: null, 
         currentNotes: '', 
         currentCoverLetter: '', 
@@ -110,7 +111,7 @@
                     <tr class="hover:bg-gray-50 transition">
 
                         {{-- APPLICANT --}}
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 <img class="h-12 w-12 rounded-full shadow object-cover"
                                      src="{{ $application->user->avatar ? asset('storage/' . $application->user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($application->user->name) }}">
@@ -122,7 +123,7 @@
                         </td>
 
                         {{-- JOB --}}
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-4">
                             <a href="{{ route('jobs.show', $application->job->slug) }}"
                                class="text-blue-600 hover:text-blue-800 font-medium">
                                 {{ $application->job->title }}
@@ -131,12 +132,21 @@
 
                         {{-- STATUS --}}
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <form method="POST" action="{{ route('employer.applications.updateStatus', $application->id) }}">
+                            {{-- Sử dụng route update-status của JobApplicationController để xử lý logic interview --}}
+                            <form method="POST" action="{{ route('applications.update-status', $application->id) }}">
                                 @csrf @method('PATCH')
 
                                 <select name="status"
                                         class="px-3 py-1.5 rounded-lg border focus:ring-blue-500 text-sm bg-white shadow-sm"
-                                        onchange="this.form.submit()"
+                                        x-on:change="
+                                            if ($event.target.value === 'interview') {
+                                                isInterviewModalOpen = true;
+                                                currentApplicationId = {{ $application->id }};
+                                                $event.target.value = '{{ $application->status }}'; // Reset visual value until saved
+                                            } else {
+                                                $event.target.form.submit();
+                                            }
+                                        "
                                 >
                                     @foreach([
                                         'reviewing' => 'Đang xem xét', 
@@ -294,6 +304,69 @@
                 </button>
             </div>
 
+        </div>
+    </div>
+
+    {{-- MODAL — INTERVIEW SCHEDULE --}}
+    <div 
+        x-show="isInterviewModalOpen"
+        x-transition.opacity
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
+        x-cloak
+    >
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden" @click.away="isInterviewModalOpen = false">
+            
+            {{-- Form trỏ về route xử lý logic tạo lịch phỏng vấn --}}
+            <form :action="'/applications/' + currentApplicationId + '/update-status'" method="POST">
+                @csrf @method('PATCH')
+                <input type="hidden" name="status" value="interview">
+
+                <div class="p-6 border-b bg-indigo-600 text-white">
+                    <h3 class="text-lg font-bold">📅 Lên lịch phỏng vấn</h3>
+                    <p class="text-indigo-100 text-sm">Thiết lập cuộc hẹn với ứng viên.</p>
+                </div>
+
+                <div class="p-6 space-y-4">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Thời gian bắt đầu <span class="text-red-500">*</span></label>
+                        <input type="datetime-local" name="scheduled_at" required
+                               class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Hình thức</label>
+                            <select name="type" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="online">Online (Meet/Zoom)</option>
+                                <option value="offline">Offline (Tại văn phòng)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Thời lượng (phút)</label>
+                            <input type="number" name="duration_minutes" value="60" min="15" step="15"
+                                   class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Địa điểm / Link họp <span class="text-red-500">*</span></label>
+                        <input type="text" name="location" required placeholder="VD: Google Meet Link hoặc Phòng họp 2"
+                               class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ghi chú / Dặn dò</label>
+                        <textarea name="notes" rows="3" placeholder="Mang theo laptop, portfolio..."
+                                  class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 bg-gray-50 px-6 py-3">
+                    <button type="button" @click="isInterviewModalOpen = false" class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100">Hủy</button>
+                    <button type="submit" class="px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 font-medium">Xác nhận lịch hẹn</button>
+                </div>
+            </form>
         </div>
     </div>
 

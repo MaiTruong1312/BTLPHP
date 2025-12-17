@@ -44,5 +44,8 @@ class JobApplication extends Model
     {
         return $this->belongsTo(CandidateProfile::class);
     }
+    public function interview(){
+        return $this->hasOne(Interview::class);
+    }
 }
 

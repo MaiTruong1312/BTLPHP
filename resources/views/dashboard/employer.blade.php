@@ -21,6 +21,7 @@
             <a href="{{ route('blog.create') }}" class="bg-green-500 text-white px-4 py-2 rounded-md">Create Post</a>
             <a href="{{ route('employer.jobs.create') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Post a New Job</a>
             <a href="{{ route('employer.applications.index') }}" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700">Manage Apps</a>
+            <a href="{{ route('employer.interviews.index') }}" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Interviews</a>
         </div>
     </div>
 

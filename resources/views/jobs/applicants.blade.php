@@ -10,6 +10,12 @@
             <p class="text-gray-600 mt-2">A total of <span class="font-semibold">{{ $applications->total() }}</span> candidate(s) have applied for this position.</p>
         </div>
 
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+
         @if($applications->count() > 0)
             <div class="space-y-6">
                 @foreach($applications as $application)
@@ -26,7 +32,29 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="text-right">
+                        <div class="text-right flex flex-col items-end space-y-2">
+                            <form action="{{ route('employer.applications.updateStatus', $application->id) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <select name="status" onchange="this.form.submit()" 
+                                        class="text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                                        {{ $application->status === 'pending' ? 'text-yellow-600' : '' }}
+                                        {{ $application->status === 'reviewing' ? 'text-blue-600' : '' }}
+                                        {{ $application->status === 'interview' ? 'text-purple-600' : '' }}
+                                        {{ $application->status === 'offered' ? 'text-green-600' : '' }}
+                                        {{ $application->status === 'rejected' ? 'text-red-600' : '' }}">
+                                    <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="reviewing" {{ $application->status == 'reviewing' ? 'selected' : '' }}>Reviewing</option>
+                                    <option value="interview" {{ $application->status == 'interview' ? 'selected' : '' }}>Interview</option>
+                                    <option value="offered" {{ $application->status == 'offered' ? 'selected' : '' }}>Offered</option>
+                                    <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                </select>
+                            </form>
+
+                            <a href="{{ route('employer.applications.email.show', $application->id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                ✉️ Send Email
+                            </a>
+
                             @if($application->cv_path)
                                 <a href="{{ asset('storage/' . $application->cv_path) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                     View CV

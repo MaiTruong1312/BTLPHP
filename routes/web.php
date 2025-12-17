@@ -31,8 +31,12 @@ use App\Http\Controllers\Admin\ApplicationController as AdminApplicationControll
 use App\Http\Controllers\Admin\JobController as AdminJobController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 
+use App\Http\Controllers\Candidate\InterviewController as CandidateInterviewController;
+use App\Http\Controllers\Candidate\ApplicationController as CandidateApplicationController;
 use App\Http\Controllers\Employer\ApplicationController as EmployerApplicationController;
 use App\Http\Controllers\Employer\EmailTemplateController;
+use App\Http\Controllers\Employer\InterviewController as EmployerInterviewController;
+use App\Http\Controllers\Employer\InterviewEvaluationController;
 use Illuminate\Support\Facades\Artisan;
 
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -156,6 +160,9 @@ Route::middleware('web')->group(function () {
         Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
         Route::post('/comments/{comment}/like', [CommentLikeController::class, 'toggle'])->name('comments.like');
 
+        // Job Application Status Update
+        Route::patch('/applications/{id}/update-status', [JobApplicationController::class, 'updateStatus'])->name('applications.update-status');
+
         // Profile
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
         Route::patch('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
@@ -180,15 +187,18 @@ Route::middleware('web')->group(function () {
             Route::delete('/profile/education/{education}', [ProfileController::class, 'destroyEducation'])->name('profile.education.destroy');
 
             // Job Applications
-            Route::get('/applications', [JobApplicationController::class, 'index'])->name('applications.index');
-            Route::get('/applications/{application}', [JobApplicationController::class, 'show'])->name('applications.show');
+            Route::get('/applications', [CandidateApplicationController::class, 'index'])->name('applications.index');
+            Route::get('/applications/{application}', [CandidateApplicationController::class, 'show'])->name('applications.show');
             Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'store'])->name('applications.store');
-            Route::delete('/applications/{application}', [JobApplicationController::class, 'destroy'])->name('applications.destroy');
+            Route::delete('/applications/{application}', [CandidateApplicationController::class, 'destroy'])->name('applications.destroy');
 
             // Saved Jobs
             Route::get('/saved-jobs', [SavedJobController::class, 'index'])->name('saved-jobs.index');
             Route::post('/saved-jobs/{job}', [SavedJobController::class, 'store'])->name('saved-jobs.store');
             Route::delete('/saved-jobs/{job}', [SavedJobController::class, 'destroy'])->name('saved-jobs.destroy');
+
+            // Interviews
+            Route::get('/interviews', [CandidateInterviewController::class, 'index'])->name('candidate.interviews.index');
         });
 
 
@@ -201,6 +211,7 @@ Route::middleware('web')->group(function () {
 
             // Job Applicants
             Route::get('/applications', [EmployerApplicationController::class, 'index'])->name('applications.index');
+            Route::get('/applications/{application}', [EmployerApplicationController::class, 'show'])->name('applications.show');
             Route::patch('/applications/{id}/status', [EmployerApplicationController::class, 'updateStatus'])->name('applications.updateStatus');
             Route::patch('/applications/{id}/notes', [EmployerApplicationController::class, 'updateNotes'])->name('applications.updateNotes');
             Route::delete('/applications/{id}', [EmployerApplicationController::class, 'destroy'])->name('applications.destroy');
@@ -210,7 +221,13 @@ Route::middleware('web')->group(function () {
 
             // Emailing Applicants
             Route::get('/applications/{application}/email', [EmployerApplicationController::class, 'showEmailForm'])->name('applications.email.show');
-            Route::post('/applications/{application}/email', [EmployerApplicationController::class, 'sendEmail'])->name('applications.email.send');
+            Route::post('/applications/{application}/email', [EmployerApplicationController::class, 'sendEmail'])->name('applications.sendEmail');
+
+            // Interviews Management
+            Route::get('/interviews', [EmployerInterviewController::class, 'index'])->name('interviews.index');
+            Route::get('/interviews/{interview}', [EmployerInterviewController::class, 'show'])->name('interviews.show');
+            Route::put('/interviews/{interview}', [EmployerInterviewController::class, 'update'])->name('interviews.update');
+            Route::post('/interviews/{interview}/evaluation', [InterviewEvaluationController::class, 'store'])->name('interviews.evaluation.store');
 
             // Email templates
             Route::resource('templates', EmailTemplateController::class);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Employer;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
+use App\Models\JobApplicationHistory;
 use App\Notifications\ApplicationStatusUpdated; // Add this line
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,7 @@ class ApplicationController extends Controller
         $this->authorize('view', $job);
         $applications = $job->applications()->with('user')->latest()->paginate(10);
         $templates = auth()->user()->emailTemplates()->get();
-        return view('applications.applicants', compact('job', 'applications', 'templates'));
+        return view('jobs.applicants', compact('job', 'applications', 'templates'));
     }
 
     public function showEmailForm(int $id)
@@ -56,7 +57,7 @@ class ApplicationController extends Controller
 
         Mail::to($application->user->email)->send(new GenericEmployerEmail($subject, $body));
 
-        return redirect()->route('employer.applications.showApplicants', $application->job_id)->with('success', 'Email đã được gửi thành công tới ' . $application->user->name);
+        return redirect()->route('employer.applications.index')->with('success', 'Email đã được gửi thành công tới ' . $application->user->name);
     }
 
     public function index(Request $request)
@@ -97,6 +98,25 @@ class ApplicationController extends Controller
 
         return view('employer.index', compact('applications', 'templates', 'jobs'));
     }
+
+    public function show($id)
+    {
+        $application = JobApplication::with(['user', 'job', 'candidateProfile'])->findOrFail($id);
+
+        // Check authorization: Ensure the job belongs to the logged-in employer
+        if ($application->job->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Lấy lịch sử thay đổi
+        $histories = JobApplicationHistory::where('job_application_id', $id)
+            ->with('user')
+            ->latest()
+            ->get();
+
+        return view('employer.applications.show', compact('application', 'histories'));
+    }
+
     public function updateStatus(Request $request, int $id)
     {
         $request->validate([
@@ -109,6 +129,7 @@ class ApplicationController extends Controller
             throw new AuthorizationException;
         }
 
+        $oldStatus = $application->status;
         $application->status = $request->input('status');
         
         // Lưu lý do từ chối nếu có
@@ -117,6 +138,15 @@ class ApplicationController extends Controller
         }
 
         $application->save();
+
+        // Ghi log lịch sử
+        JobApplicationHistory::create([
+            'job_application_id' => $application->id,
+            'user_id' => Auth::id(),
+            'from_status' => $oldStatus,
+            'to_status' => $application->status,
+            'note' => $request->input('rejection_reason') ? 'Reason: ' . $request->input('rejection_reason') : 'Status updated manually by employer.',
+        ]);
 
         // Gửi thông báo cho ứng viên
         $candidate = $application->user;

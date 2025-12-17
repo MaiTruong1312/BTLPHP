@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Job;
 use App\Models\JobApplication;
+use App\Models\Interview;
 use App\Notifications\NewApplicantNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class JobApplicationController extends Controller
@@ -83,11 +85,46 @@ class JobApplicationController extends Controller
         $application = JobApplication::findOrFail($id);
         $this->authorize('update', $application);
 
-        $request->validate([
+        $rules = [
             'status' => 'required|in:reviewing,interview,offered,rejected,withdrawn',
-        ]);
+        ];
 
-        $application->update(['status' => $request->status]);
+        if ($request->status === 'interview') {
+            $rules['scheduled_at'] = 'required|date|after:now';
+            $rules['type'] = 'required|in:online,offline';
+            $rules['location'] = 'required|string|max:255';
+            $rules['notes'] = 'nullable|string';
+        }
+
+        $validated = $request->validate($rules);
+
+        DB::beginTransaction();
+        try {
+            $updateData = ['status' => $validated['status']];
+            
+            if ($request->has('rejection_reason')) {
+                $updateData['rejection_reason'] = $request->rejection_reason;
+            }
+
+            $application->update($updateData);
+
+            if ($validated['status'] === 'interview') {
+                Interview::create([
+                    'job_application_id' => $application->id,
+                    'interviewer_id' => auth()->id(),
+                    'scheduled_at' => $validated['scheduled_at'],
+                    'duration_minutes' => $request->input('duration_minutes', 60),
+                    'type' => $validated['type'],
+                    'location' => $validated['location'],
+                    'notes' => $request->input('notes'),
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to update status: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Application status updated successfully!');
     }
@@ -102,4 +139,3 @@ class JobApplicationController extends Controller
         return back()->with('success', 'Application withdrawn successfully!');
     }
 }
-
